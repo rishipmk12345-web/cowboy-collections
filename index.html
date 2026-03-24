@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Cow Boy Collections</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial;
+      background: #000;
+      color: white;
+    }
+    header {
+      padding: 15px;
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+      border-bottom: 1px solid #333;
+    }
+    .products {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      padding: 10px;
+    }
+    .card {
+      background: #111;
+      padding: 10px;
+      border-radius: 10px;
+      text-align: center;
+    }
+    button {
+      background: white;
+      color: black;
+      padding: 8px;
+      border: none;
+      border-radius: 5px;
+      margin-top: 5px;
+    }
+    .cart {
+      padding: 10px;
+      border-top: 1px solid #333;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>Cow Boy Collections</header>
+
+<div class="products" id="products"></div>
+
+<div class="cart">
+  <h3>Cart</h3>
+  <div id="cartItems"></div>
+  <h4>Total: ₹<span id="total">0</span></h4>
+  <button onclick="checkout()">Checkout</button>
+</div>
+
+<script>
+  const products = [
+    {name: "Linen Pant", price: 999},
+    {name: "Acid Wash T-Shirt", price: 799},
+    {name: "Drop Shoulder Tee", price: 899},
+    {name: "Hoodie", price: 1299}
+  ];
+
+  let cart = [];
+
+  function displayProducts() {
+    let html = "";
+    products.forEach((p, i) => {
+      html += `
+        <div class="card">
+          <p>${p.name}</p>
+          <p>₹${p.price}</p>
+          <button onclick="addToCart(${i})">Add</button>
+        </div>
+      `;
+    });
+    document.getElementById("products").innerHTML = html;
+  }
+
+  function addToCart(i) {
+    cart.push(products[i]);
+    displayCart();
+  }
+
+  function displayCart() {
+    let html = "";
+    let total = 0;
+
+    cart.forEach(item => {
+      html += `<p>${item.name} - ₹${item.price}</p>`;
+      total += item.price;
+    });
+
+    document.getElementById("cartItems").innerHTML = html;
+    document.getElementById("total").innerText = total;
+  }
+
+  function checkout() {
+    alert("Order placed! Payment integration next step 🔥");
+  }
+
+  displayProducts();
+</script>
+
+</body>
+</html>
