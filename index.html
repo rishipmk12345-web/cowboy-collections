@@ -2,80 +2,62 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🤠 Cowboy Collections Mens Wear</title><style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:sans-serif;background:#eef1f5}
-
-header{background:#ffcc00;padding:12px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:10}
+<title>Cowboy Collections Mens Wear 🤠</title><style>
+body{margin:0;font-family:sans-serif;background:#f5f5f5}
+header{background:#ffcc00;padding:10px;display:flex;align-items:center;gap:10px}
 .logo{font-weight:bold}
-.search{flex:1;padding:10px;border-radius:25px;border:none}
-
-.categories{display:flex;overflow:auto;gap:10px;padding:10px;background:white}
-.cat{padding:8px 14px;background:#eee;border-radius:20px}
-
-.slider{overflow:hidden}
-.slides{display:flex;animation:slide 10s infinite}
-.slides img{width:100%}
-@keyframes slide{0%{transform:translateX(0)}33%{transform:translateX(-100%)}66%{transform:translateX(-200%)}}
-
-.products{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:12px}
-.card{background:white;padding:10px;border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,0.15);position:relative}
-.badge{position:absolute;top:10px;left:10px;background:red;color:white;padding:3px 6px;border-radius:5px;font-size:10px}
+.search{flex:1;padding:10px;border-radius:20px;border:none}
+.products{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:10px}
+.card{background:white;padding:10px;border-radius:10px}
 .card img{width:100%;border-radius:10px}
-.price{font-weight:bold}
-.old{text-decoration:line-through;color:gray;font-size:12px}
-
-.btn{padding:8px;margin-top:6px;border-radius:8px;text-align:center;color:white}
+.btn{padding:8px;margin-top:5px;border-radius:6px;color:white;text-align:center}
 .cartbtn{background:black}
 .wabtn{background:#25D366}
 .upi{background:#0070ba}
-
-.cartpanel{position:fixed;bottom:0;width:100%;background:white;padding:15px;display:none;max-height:70%;overflow:auto;border-radius:15px 15px 0 0}
-
-.bottomnav{position:fixed;bottom:0;width:100%;background:white;display:flex;justify-content:space-around;padding:10px;border-top:1px solid #ddd}
-
-.login{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center}
-.loginbox{background:white;padding:20px;border-radius:10px;width:80%}
-.loginbox input{width:100%;padding:10px;margin:5px 0}
-
-.adminPanel{position:fixed;top:0;left:0;width:100%;height:100%;background:white;display:none;overflow:auto;padding:20px}
-
+.loginbox{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center}
+.logininner{background:white;padding:20px;border-radius:10px;width:80%}
 </style></head><body><header>
-<div class="logo">🤠 Cowboy Collections</div>
+<div class="logo">🤠 Cowboy</div>
 <input class="search" placeholder="Search..." oninput="search(this.value)">
-<div onclick="toggleCart()">🛒</div>
-</header><div class="categories">
-<div class="cat" onclick="filter('all')">All</div>
-<div class="cat" onclick="filter('tshirt')">Tshirt</div>
-<div class="cat" onclick="filter('shirt')">Shirt</div>
-<div class="cat" onclick="filter('pant')">Pant</div>
-</div><div class="slider">
-<div class="slides">
-<img src="https://images.unsplash.com/photo-1503342217505-b0a15ec3261c">
-<img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab">
-<img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f">
-</div>
-</div><div class="products" id="products"></div><div class="cartpanel" id="cartpanel"></div><div class="bottomnav">
-<div>🏠</div>
-<div onclick="toggleCart()">🛒</div>
 <div onclick="openLogin()">👤</div>
-<div onclick="openAdmin()">⚙️</div>
-</div><div class="login" id="login">
-<div class="loginbox">
-<h3>Login</h3>
-<input placeholder="Name">
-<input placeholder="Phone">
-<button onclick="closeLogin()">Login</button>
+<div onclick="toggleCart()">🛒</div>
+</header><div class="products" id="products"></div><div id="cartpanel" style="display:none;background:white;position:fixed;bottom:0;width:100%;padding:10px"></div><!-- LOGIN --><div class="loginbox" id="loginbox">
+<div class="logininner">
+<h3>Login 🔐</h3>
+<input id="email" placeholder="Email"><br><br>
+<input id="password" type="password" placeholder="Password"><br><br>
+<button onclick="signup()">Signup</button>
+<button onclick="login()">Login</button>
+<button onclick="googleLogin()">Google</button>
+<button onclick="closeLogin()">Close</button>
 </div>
-</div><div class="adminPanel" id="adminPanel"></div><script type="module">
+</div><script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-const app=initializeApp({apiKey:"AIzaSyDRMF6SkGsve8T5HoBoCDo8pzz8BUi7",projectId:"cowboy-collections"});
+const firebaseConfig={
+apiKey:"AIzaSyDRMF6SkGsve8T5HoBoCDo8pzz8BUi7",
+projectId:"cowboy-collections"
+};
+
+const app=initializeApp(firebaseConfig);
 const db=getFirestore(app);
+const auth=getAuth(app);
 
 let allProducts=[];
-let cart=JSON.parse(localStorage.getItem("cart"))||[];
+let cart=[];
+let userId=null;
+
+onAuthStateChanged(auth,(user)=>{
+if(user){
+userId=user.uid;
+cart=JSON.parse(localStorage.getItem(userId))||[];
+alert("Welcome 🔥");
+}else{
+userId=null;
+}
+});
 
 async function loadProducts(){
 let snap=await getDocs(collection(db,"products"));
@@ -88,74 +70,67 @@ function show(data){
 let html="";
 data.forEach(p=>{
 html+=`<div class="card">
-<div class="badge">SALE</div>
 <img src="${p.img}">
 <h4>${p.name}</h4>
-<p><span class="old">₹${Number(p.price)+300}</span> <span class="price">₹${p.price}</span></p>
-<div class="btn cartbtn" onclick="addCart('${p.name}','${p.price}')">Add to Cart</div>
+<p>₹${p.price}</p>
+<div class="btn cartbtn" onclick="addCart('${p.name}','${p.price}')">Cart</div>
 <div class="btn wabtn" onclick="orderWA('${p.name}','${p.price}')">WhatsApp</div>
 <div class="btn upi" onclick="payUPI('${p.price}')">UPI</div>
 </div>`;
 });
+
 document.getElementById("products").innerHTML=html;
 }
 
-window.search=q=>show(allProducts.filter(p=>p.name.toLowerCase().includes(q.toLowerCase())));
-window.filter=type=>type==='all'?show(allProducts):show(allProducts.filter(p=>p.name.toLowerCase().includes(type)));
+window.search=function(q){
+let res=allProducts.filter(p=>p.name.toLowerCase().includes(q.toLowerCase()));
+show(res);
+}
 
-window.addCart=(name,price)=>{cart.push({name,price});localStorage.setItem("cart",JSON.stringify(cart));alert("Added");}
+window.addCart=function(name,price){
+if(!userId){alert("Login first");openLogin();return}
+cart.push({name,price});
+localStorage.setItem(userId,JSON.stringify(cart));
+alert("Added 🔥");
+}
 
-window.toggleCart=()=>{
+window.toggleCart=function(){
 let panel=document.getElementById("cartpanel");
 panel.style.display=panel.style.display==='block'?'none':'block';
-let html="<h3>Cart</h3>";let total=0;
-cart.forEach((p,i)=>{html+=`${p.name}-₹${p.price} <button onclick="removeItem(${i})">❌</button><br>`;total+=Number(p.price);});
-html+=`<h4>Total ₹${total}</h4>`;
-html+=`<input id='name' placeholder='Name'><input id='phone' placeholder='Phone'><input id='address' placeholder='Address'><button onclick='placeOrder()'>Place Order</button>`;
+let html="Cart:<br>";
+let total=0;
+cart.forEach(p=>{html+=p.name+" ₹"+p.price+"<br>";total+=Number(p.price);});
+html+="Total ₹"+total;
 panel.innerHTML=html;
 }
 
-window.removeItem=i=>{cart.splice(i,1);localStorage.setItem("cart",JSON.stringify(cart));toggleCart();}
-
-window.placeOrder=async()=>{
-let name=document.getElementById('name').value;
-let phone=document.getElementById('phone').value;
-let address=document.getElementById('address').value;
-if(!name||!phone||!address){alert("Fill all");return}
-await addDoc(collection(db,"orders"),{name,phone,address,cart,date:new Date().toISOString()});
-alert("Order placed");cart=[];localStorage.setItem("cart",JSON.stringify(cart));location.reload();
+window.orderWA=function(name,price){
+window.open(`https://wa.me/919994931763?text=Buy ${name} ₹${price}`);
 }
 
-window.orderWA=(name,price)=>window.open(`https://wa.me/919994931763?text=Buy ${name} ₹${price}`);
-window.payUPI=price=>window.location.href=`upi://pay?pa=sachinsharma69545@okicici&pn=Cowboy&am=${price}&cu=INR`;
-
-window.openLogin=()=>document.getElementById("login").style.display="flex";
-window.closeLogin=()=>document.getElementById("login").style.display="none";
-
-window.openAdmin = async () => {
-
-let pass = prompt("Enter Admin Password 🔐");
-
-if(pass !== "04032026"){
-  alert("Wrong Password ❌");
-  return;
+window.payUPI=function(price){
+window.location.href=`upi://pay?pa=sachinsharma69545@okicici&pn=Cowboy&am=${price}&cu=INR`;
 }
 
-let panel=document.getElementById("adminPanel");panel.style.display="block";
-let snap=await getDocs(collection(db,"orders"));
-let html="<h2>Orders</h2>";
+// LOGIN FUNCTIONS
+window.openLogin=()=>document.getElementById("loginbox").style.display="flex";
+window.closeLogin=()=>document.getElementById("loginbox").style.display="none";
 
-snap.forEach(doc=>{
-  let o=doc.data();
-  html+=`<div style='border:1px solid #ccc;padding:10px;margin:10px 0'>
-  <b>${o.name}</b><br>${o.phone}<br>${o.address}<br>`;
-  o.cart.forEach(i=>{html+=`${i.name}-₹${i.price}<br>`});
-  html+=`<small>${o.date}</small></div>`;
-});
+window.signup=()=>{
+let email=document.getElementById("email").value;
+let pass=document.getElementById("password").value;
+createUserWithEmailAndPassword(auth,email,pass);
+}
 
-html+="<button onclick='document.getElementById(\"adminPanel\").style.display=\"none\"'>Close</button>";
+window.login=()=>{
+let email=document.getElementById("email").value;
+let pass=document.getElementById("password").value;
+signInWithEmailAndPassword(auth,email,pass);
+}
 
-panel.innerHTML=html;
+window.googleLogin=()=>{
+let provider=new GoogleAuthProvider();
+signInWithPopup(auth,provider);
 }
 
 loadProducts();
