@@ -7,9 +7,9 @@
 <style>
 body{
 margin:0;
-font-family:Arial;
-background:#F5E9DA;
-color:#3E2723;
+font-family:'Segoe UI';
+background:#F5E6D3;
+color:#3b2f2f;
 }
 
 /* HEADER */
@@ -17,16 +17,34 @@ color:#3E2723;
 display:flex;
 justify-content:space-between;
 padding:15px;
-background:#3E2723;
-color:white;
+background:#3b2f2f;
+color:#fff;
 font-weight:bold;
 }
 
 /* HERO */
+.hero{
+position:relative;
+}
 .hero img{
 width:100%;
-height:250px;
+height:300px;
 object-fit:cover;
+}
+.heroText{
+position:absolute;
+bottom:20px;
+left:20px;
+color:white;
+font-size:22px;
+font-weight:bold;
+}
+
+/* SECTION TITLE */
+.title{
+padding:10px;
+font-size:20px;
+font-weight:bold;
 }
 
 /* PRODUCTS */
@@ -36,38 +54,63 @@ grid-template-columns:repeat(2,1fr);
 gap:10px;
 padding:10px;
 }
+
 .card{
 background:white;
-padding:10px;
-border-radius:10px;
-box-shadow:0 2px 5px rgba(0,0,0,0.1);
-}
-.card img{
-width:100%;
-border-radius:10px;
-}
-.card h3{
-margin:5px 0;
-font-size:16px;
+border-radius:12px;
+overflow:hidden;
+box-shadow:0 3px 8px rgba(0,0,0,0.1);
 }
 
-/* BUTTON */
+.card img{
+width:100%;
+height:180px;
+object-fit:cover;
+}
+
+.cardBody{
+padding:10px;
+}
+
+.price{
+color:#8B4513;
+font-weight:bold;
+}
+
+.tag{
+color:green;
+font-size:12px;
+}
+
 .btn{
 width:100%;
 padding:8px;
-background:#3E2723;
-color:white;
-border:none;
 margin-top:5px;
-border-radius:5px;
+border:none;
+border-radius:6px;
+background:#3b2f2f;
+color:white;
 }
 
 /* CART */
 .cart{
-padding:10px;
-background:#fff3e0;
+background:#fff8f0;
 margin:10px;
+padding:10px;
 border-radius:10px;
+}
+
+/* WHATSAPP BUTTON */
+.whatsapp{
+position:fixed;
+bottom:20px;
+right:20px;
+background:#25D366;
+color:white;
+padding:15px;
+border-radius:50%;
+font-size:20px;
+text-decoration:none;
 }
 </style>
 </head>
@@ -76,29 +119,29 @@ border-radius:10px;
 
 <div class="header">
 <div>🤠 Cowboy Collections</div>
-<div>🛒 Cart</div>
+<div>🔥 New Drop</div>
 </div>
 
 <div class="hero">
 <img src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b">
+<div class="heroText">🔥 Premium Streetwear</div>
 </div>
 
-<h2 style="padding:10px;">🔥 Products</h2>
-
+<div class="title">🔥 Best Sellers</div>
 <div class="products" id="products"></div>
 
 <div class="cart">
-<h3>🛒 Your Cart</h3>
+<h3>🛒 Cart</h3>
 <div id="cartItems"></div>
 <h3>Total ₹<span id="total">0</span></h3>
-
 <button class="btn" onclick="pay()">Pay via UPI 💳</button>
 </div>
 
+<a class="whatsapp" id="waBtn">💬</a>
+
 <script>
 
-/* SAMPLE PRODUCTS (admin la change pannalaam later) */
-let products = JSON.parse(localStorage.getItem("products")) || [
+let products = [
 {
 name:"Acid Wash T-Shirt 🤠",
 price:699,
@@ -113,28 +156,31 @@ img:"https://images.unsplash.com/photo-1512436991641-6745cdb1723f"
 
 let cart=[];
 
-/* DISPLAY PRODUCTS */
+/* DISPLAY */
 function display(){
 let html="";
 products.forEach((p,i)=>{
 html+=`
 <div class="card">
 <img src="${p.img}">
-<h3>${p.name}</h3>
-<p>₹${p.price}</p>
+<div class="cardBody">
+<h4>${p.name}</h4>
+<p class="price">₹${p.price}</p>
+<p class="tag">🔥 Limited Stock</p>
 <button class="btn" onclick="add(${i})">Add to Cart</button>
+<button class="btn" onclick="whatsappOrder('${p.name}',${p.price})">Order on WhatsApp</button>
+</div>
 </div>`;
 });
 document.getElementById("products").innerHTML=html;
 }
 
-/* ADD TO CART */
+/* CART */
 function add(i){
 cart.push(products[i]);
 showCart();
 }
 
-/* SHOW CART */
 function showCart(){
 let html="";
 let total=0;
@@ -148,7 +194,7 @@ document.getElementById("cartItems").innerHTML=html;
 document.getElementById("total").innerText=total;
 }
 
-/* PAYMENT (UPI) */
+/* UPI */
 function pay(){
 if(cart.length==0){
 alert("Cart empty");
@@ -158,11 +204,19 @@ return;
 let total=0;
 cart.forEach(i=>total+=i.price);
 
-/* YOUR UPI */
-let upi="upi://pay?pa=sachinsharma69545@okicici&pn=CowboyCollections&am="+total+"&tn=Order Payment&cu=INR";
-
+let upi="upi://pay?pa=sachinsharma69545@okicici&pn=CowboyCollections&am="+total+"&cu=INR";
 window.open(upi);
 }
+
+/* WHATSAPP */
+function whatsappOrder(name,price){
+let msg="Hi, I want to order: "+name+" Price: ₹"+price;
+let url="https://wa.me/919994931763?text="+encodeURIComponent(msg);
+window.open(url);
+}
+
+/* FLOAT BUTTON */
+document.getElementById("waBtn").href="https://wa.me/919994931763";
 
 display();
 
