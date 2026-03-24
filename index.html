@@ -5,145 +5,29 @@
 <title>🤠 Cowboy Collections Mens Wear</title><style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:sans-serif;background:#eef1f5}
-
-header{
-background:#ffcc00;
-padding:12px;
-display:flex;
-align-items:center;
-gap:10px;
-position:sticky;top:0;z-index:10;
-}
-.logo{font-weight:bold;font-size:18px}
+header{background:#ffcc00;padding:12px;display:flex;align-items:center;gap:10px;position:sticky;top:0}
+.logo{font-weight:bold}
 .search{flex:1;padding:10px;border-radius:25px;border:none}
-.icon{font-size:20px}
 
-.categories{
-display:flex;
-overflow:auto;
-gap:10px;
-padding:10px;
-background:white;
-}
-.cat{padding:8px 14px;background:#eee;border-radius:20px;font-size:14px}
-
-.slider{overflow:hidden}
-.slides{display:flex;animation:slide 10s infinite}
-.slides img{width:100%}
-@keyframes slide{
-0%{transform:translateX(0)}
-33%{transform:translateX(-100%)}
-66%{transform:translateX(-200%)}
-}
-
-.products{
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:12px;
-padding:12px;
-}
-.card{
-background:white;
-padding:10px;
-border-radius:12px;
-box-shadow:0 4px 10px rgba(0,0,0,0.15);
-position:relative;
-}
-.badge{
-position:absolute;
-top:10px;
-left:10px;
-background:red;
-color:white;
-padding:3px 6px;
-border-radius:5px;
-font-size:10px;
-}
+.products{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:12px}
+.card{background:white;padding:10px;border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,0.15)}
 .card img{width:100%;border-radius:10px}
-.price{font-weight:bold}
-.old{text-decoration:line-through;color:gray;font-size:12px}
-
-.btn{padding:8px;margin-top:6px;border-radius:8px;text-align:center;color:white;font-size:14px}
+.btn{padding:8px;margin-top:6px;border-radius:8px;text-align:center;color:white}
 .cartbtn{background:black}
-.wabtn{background:#25D366}
-.upi{background:#0070ba}
+.buybtn{background:#25D366}
 
-.cartpanel{
-position:fixed;
-bottom:0;
-left:0;
-width:100%;
-background:white;
-padding:15px;
-display:none;
-max-height:60%;
-overflow:auto;
-border-radius:15px 15px 0 0;
-box-shadow:0 -4px 10px rgba(0,0,0,0.3);
-}
+.cartpanel{position:fixed;bottom:0;width:100%;background:white;padding:15px;display:none;max-height:60%;overflow:auto}
 
-.chat{
-position:fixed;
-bottom:70px;
-right:15px;
-background:#25D366;
-padding:12px;
-border-radius:50%;
-color:white;
-font-size:18px;
-}
-
-.bottomnav{
-position:fixed;
-bottom:0;
-width:100%;
-background:white;
-display:flex;
-justify-content:space-around;
-padding:10px;
-border-top:1px solid #ddd;
-}
-
-.login{
-position:fixed;
-top:0;left:0;width:100%;height:100%;
-background:rgba(0,0,0,0.6);
-display:none;align-items:center;justify-content:center;
-}
-.loginbox{
-background:white;padding:20px;border-radius:10px;width:80%;
-}
-.loginbox input{width:100%;padding:10px;margin:5px 0}
+.checkoutbox{margin-top:10px}
+.checkoutbox input{width:100%;padding:8px;margin:5px 0}
 
 </style></head><body><header>
 <div class="logo">🤠 Cowboy</div>
-<input class="search" placeholder="Search products..." oninput="search(this.value)">
-<div class="icon" onclick="toggleCart()">🛒</div>
-</header><div class="categories">
-<div class="cat" onclick="filter('all')">All</div>
-<div class="cat" onclick="filter('tshirt')">Tshirts</div>
-<div class="cat" onclick="filter('shirt')">Shirts</div>
-<div class="cat" onclick="filter('pant')">Trackpants</div>
-</div><div class="slider">
-<div class="slides">
-<img src="https://images.unsplash.com/photo-1503342217505-b0a15ec3261c">
-<img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab">
-<img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f">
-</div>
-</div><div class="products" id="products"></div><div class="cartpanel" id="cartpanel"></div><div class="chat" onclick="openWA()">💬</div><div class="bottomnav">
-<div>🏠</div>
+<input class="search" placeholder="Search..." oninput="search(this.value)">
 <div onclick="toggleCart()">🛒</div>
-<div onclick="openLogin()">👤</div>
-</div><div class="login" id="login">
-<div class="loginbox">
-<h3>Login</h3>
-<input placeholder="Name">
-<input placeholder="Phone">
-<button onclick="closeLogin()">Login</button>
-</div>
-</div><script type="module">
+</header><div class="products" id="products"></div><div class="cartpanel" id="cartpanel"></div><script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig={
 apiKey:"AIzaSyDRMF6SkGsve8T5HoBoCDo8pzz8BUi7",
@@ -166,15 +50,12 @@ show(allProducts);
 function show(data){
 let html="";
 data.forEach(p=>{
-html+=`
-<div class="card">
-<div class="badge">SALE</div>
+html+=`<div class="card">
 <img src="${p.img}">
 <h4>${p.name}</h4>
-<p><span class="old">₹${Number(p.price)+300}</span> <span class="price">₹${p.price}</span></p>
+<p>₹${p.price}</p>
 <div class="btn cartbtn" onclick="addCart('${p.name}','${p.price}')">Add to Cart</div>
-<div class="btn wabtn" onclick="orderWA('${p.name}','${p.price}')">WhatsApp</div>
-<div class="btn upi" onclick="payUPI('${p.price}')">UPI Pay</div>
+<div class="btn buybtn" onclick="buyNow('${p.name}','${p.price}')">Buy Now</div>
 </div>`;
 });
 document.getElementById("products").innerHTML=html;
@@ -185,71 +66,53 @@ let res=allProducts.filter(p=>p.name.toLowerCase().includes(q.toLowerCase()));
 show(res);
 }
 
-window.filter=function(type){
-if(type==='all'){show(allProducts);return}
-let res=allProducts.filter(p=>p.name.toLowerCase().includes(type));
-show(res);
-}
-
 window.addCart=function(name,price){
 cart.push({name,price});
 localStorage.setItem("cart",JSON.stringify(cart));
-alert("Added 🔥");
+alert("Added");
 }
 
 window.toggleCart=function(){
 let panel=document.getElementById("cartpanel");
 panel.style.display=panel.style.display==='block'?'none':'block';
 
-let html="<h3>Cart 🛒</h3>";
+let html="<h3>Cart</h3>";
 let total=0;
 
-cart.forEach((p,i)=>{
-html+=`${p.name}-₹${p.price} <button onclick="removeItem(${i})">❌</button><br>`;
-total+=Number(p.price);
-});
+cart.forEach(p=>{html+=`${p.name}-₹${p.price}<br>`;total+=Number(p.price);});
 
 html+=`<h4>Total ₹${total}</h4>`;
-html+=`<button onclick="checkout()">Checkout 🔥</button>`;
+
+html+=`
+<div class='checkoutbox'>
+<input id='name' placeholder='Your Name'>
+<input id='phone' placeholder='Phone'>
+<input id='address' placeholder='Address'>
+<button onclick='placeOrder()'>Place Order</button>
+</div>`;
+
 panel.innerHTML=html;
 }
 
-window.removeItem=function(i){
-cart.splice(i,1);
+window.placeOrder=async function(){
+let name=document.getElementById('name').value;
+let phone=document.getElementById('phone').value;
+let address=document.getElementById('address').value;
+
+if(!name||!phone||!address){alert("Fill details");return}
+
+await addDoc(collection(db,"orders"),{
+name,phone,address,cart,date:new Date().toISOString()
+});
+
+alert("Order placed 🔥");
+cart=[];
 localStorage.setItem("cart",JSON.stringify(cart));
-toggleCart();
+location.reload();
 }
 
-window.checkout=function(){
-let msg="Order:%0A";
-let total=0;
-cart.forEach(p=>{msg+=`${p.name}-₹${p.price}%0A`;total+=Number(p.price);});
-msg+=`Total ₹${total}`;
-
-let numbers=["919994931763","918838542843"];
-let random=numbers[Math.floor(Math.random()*numbers.length)];
-
-window.open(`https://wa.me/${random}?text=${msg}`);
-}
-
-window.orderWA=function(name,price){
+window.buyNow=function(name,price){
 window.open(`https://wa.me/919994931763?text=Buy ${name} ₹${price}`);
-}
-
-window.payUPI=function(price){
-window.location.href=`upi://pay?pa=sachinsharma69545@okicici&pn=Cowboy&am=${price}&cu=INR`;
-}
-
-window.openWA=function(){
-window.open("https://wa.me/919994931763");
-}
-
-window.openLogin=function(){
-document.getElementById("login").style.display="flex";
-}
-
-window.closeLogin=function(){
-document.getElementById("login").style.display="none";
 }
 
 loadProducts();
