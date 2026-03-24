@@ -1,91 +1,28 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Admin Panel 🤠</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-<style>
-body{
-font-family:Arial;
-background:#f5e6d3;
-padding:20px;
-}
+const firebaseConfig = {
+  apiKey: "AIzaSyDRMF6SkGsve8T5HoBoCDo8pzz8BU",
+  authDomain: "cowboy-collections.firebaseapp.com",
+  projectId: "cowboy-collections",
+  storageBucket: "cowboy-collections.appspot.com",
+  messagingSenderId: "669293200742",
+  appId: "1:669293200742:web:137e00ca5386a811"
+};
 
-input{
-width:100%;
-padding:10px;
-margin:5px 0;
-}
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-button{
-padding:10px;
-width:100%;
-background:#3b2f2f;
-color:white;
-border:none;
-margin-top:5px;
-}
-
-.card{
-background:white;
-padding:10px;
-margin-top:10px;
-border-radius:10px;
-}
-</style>
-</head>
-
-<body>
-
-<h2>🤠 Admin Panel</h2>
-
-<input id="name" placeholder="Product Name">
-<input id="price" placeholder="Price">
-<input id="img" placeholder="Image URL">
-
-<button onclick="addProduct()">Add Product</button>
-
-<h3>📦 Products</h3>
-<div id="list"></div>
-
-<script>
-
-let products = JSON.parse(localStorage.getItem("products")) || [];
-
-function addProduct(){
+window.addProduct = async function(){
 let name=document.getElementById("name").value;
 let price=document.getElementById("price").value;
 let img=document.getElementById("img").value;
 
-products.push({name,price,img});
-localStorage.setItem("products", JSON.stringify(products));
+await addDoc(collection(db,"products"),{
+name,price,img
+});
 
-show();
 alert("Product Added 🔥");
 }
-
-function show(){
-let html="";
-products.forEach((p,i)=>{
-html+=`
-<div class="card">
-<p>${p.name}</p>
-<p>₹${p.price}</p>
-<button onclick="del(${i})">Delete</button>
-</div>`;
-});
-document.getElementById("list").innerHTML=html;
-}
-
-function del(i){
-products.splice(i,1);
-localStorage.setItem("products", JSON.stringify(products));
-show();
-}
-
-show();
-
 </script>
-
-</body>
-</html>
