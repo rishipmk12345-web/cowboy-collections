@@ -5,35 +5,21 @@
 <title>Cowboy Collections 🤠</title><style>
 body { margin:0; font-family: Arial; background:#f5f2e9; }
 header { background:linear-gradient(90deg,#ffcc00,#ff9900); padding:12px; display:flex; justify-content:space-between; }
-.search { margin:10px; padding:12px; border-radius:25px; border:none; width:90%; }
 .products { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; padding:10px; }
-.card { background:white; border-radius:15px; padding:10px; box-shadow:0 4px 12px rgba(0,0,0,0.2); position:relative; }
+.card { background:white; border-radius:15px; padding:10px; box-shadow:0 4px 12px rgba(0,0,0,0.2); }
 .card img { width:100%; border-radius:10px; }
-.badge { position:absolute; top:10px; left:10px; background:red; color:white; padding:4px 6px; font-size:12px; border-radius:5px; }
-.price { font-weight:bold; }
-.old { text-decoration:line-through; color:gray; font-size:12px; }
 .buy { background:black; color:white; padding:8px; text-align:center; border-radius:8px; margin-top:5px; }
 .green { background:#25D366; }
-.blue { background:#0070ba; }
-.popup {
-position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6);
-display:none; align-items:center; justify-content:center;
-}
-.popup-content {
-background:white; padding:20px; border-radius:15px; width:90%;
-}
-.popup img { width:100%; border-radius:10px; }
-.whatsapp-float {
-position:fixed; bottom:80px; right:15px;
-background:#25D366; color:white; padding:15px; border-radius:50%; font-size:20px;
+.cartpanel {
+position:fixed; bottom:0; left:0; width:100%; background:white;
+padding:15px; display:none; max-height:60%; overflow:auto;
+box-shadow:0 -3px 10px rgba(0,0,0,0.3);
 }
 </style></head><body>
 <header>
 <div>🤠 Cowboy Collections Mens Wear</div>
-<div onclick="openCart()">🛒</div>
-</header><input class="search" placeholder="Search cowboy styles..."><div class="products" id="products"></div><div class="popup" id="popup">
-<div class="popup-content" id="popupContent"></div>
-</div><div class="whatsapp-float" onclick="openCart()">💬</div><script type="module">
+<div onclick="toggleCart()">🛒</div>
+</header><div class="products" id="products"></div><div class="cartpanel" id="cartpanel"></div><script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
@@ -46,55 +32,56 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-let allProducts = [];
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-async function loadProducts() {
-  const snap = await getDocs(collection(db, "products"));
-  allProducts = [];
-  snap.forEach(doc=>allProducts.push(doc.data()));
-  show(allProducts);
-}
-
-function show(products){
-  let c = document.getElementById("products");
-  c.innerHTML="";
-  products.forEach(p=>{
-    c.innerHTML += `
-    <div class="card" onclick="openPopup('${p.img}','${p.name}','${p.price}')">
-    <div class="badge">🔥 SALE</div>
+async function loadProducts(){
+  let snap = await getDocs(collection(db,"products"));
+  let html="";
+  snap.forEach(doc=>{
+    let p=doc.data();
+    html+=`
+    <div class="card">
     <img src="${p.img}">
     <h4>${p.name}</h4>
-    <p><span class="old">₹${Number(p.price)+300}</span> <span class="price">₹${p.price}</span></p>
-    <div class="buy" onclick="event.stopPropagation();addCart('${p.name}','${p.price}')">Add to Cart</div>
-    <div class="buy green" onclick="event.stopPropagation();buyNow('${p.name}','${p.price}')">Buy Now</div>
+    <p>₹${p.price}</p>
+    <div class="buy" onclick="addCart('${p.name}','${p.price}')">Add to Cart</div>
+    <div class="buy green" onclick="buyNow('${p.name}','${p.price}')">Buy Now</div>
     </div>`;
-  })
+  });
+  document.getElementById("products").innerHTML=html;
 }
 
-window.openPopup = function(img,name,price){
-  document.getElementById("popup").style.display="flex";
-  document.getElementById("popupContent").innerHTML=`
-  <img src="${img}">
-  <h3>${name}</h3>
-  <p>₹${price}</p>
-  <div class="buy" onclick="addCart('${name}','${price}')">Add to Cart</div>
-  <div class="buy green" onclick="buyNow('${name}','${price}')">Buy Now</div>
-  `;
-}
-
-window.onclick = function(e){
-  if(e.target.id==="popup") document.getElementById("popup").style.display="none";
-}
-
-window.addCart = function(name,price){
+window.addCart=function(name,price){
   cart.push({name,price});
   localStorage.setItem("cart",JSON.stringify(cart));
-  alert("Added 🔥");
+  alert("Added to cart 🔥");
 }
 
-window.openCart = function(){
-  if(cart.length===0){alert("Cart empty 😢"); return}
+window.toggleCart=function(){
+  let panel=document.getElementById("cartpanel");
+  panel.style.display=panel.style.display==='block'?'none':'block';
+
+  let html="<h3>Your Cart 🛒</h3>";
+  let total=0;
+
+  cart.forEach((p,i)=>{
+    html+=`${p.name} - ₹${p.price} <button onclick="removeItem(${i})">❌</button><br>`;
+    total+=Number(p.price);
+  });
+
+  html+=`<h4>Total: ₹${total}</h4>`;
+  html+=`<button onclick="checkout()">Checkout 🔥</button>`;
+
+  panel.innerHTML=html;
+}
+
+window.removeItem=function(i){
+  cart.splice(i,1);
+  localStorage.setItem("cart",JSON.stringify(cart));
+  toggleCart();
+}
+
+window.checkout=function(){
   let msg="Order:%0A";
   let total=0;
   cart.forEach(p=>{ msg+=`${p.name}-₹${p.price}%0A`; total+=Number(p.price); });
@@ -102,7 +89,7 @@ window.openCart = function(){
   window.open(`https://wa.me/919994931763?text=${msg}`);
 }
 
-window.buyNow = function(name,price){
+window.buyNow=function(name,price){
   let msg=`Buy ${name} ₹${price}`;
   window.open(`https://wa.me/919994931763?text=${msg}`);
 }
