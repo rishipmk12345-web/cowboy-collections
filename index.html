@@ -3,162 +3,194 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cowboy Collections Mens Wear 🤠</title><style>
-body {
-  margin:0;
-  font-family:'Segoe UI',sans-serif;
-  background:#f3e1b6;
+body{margin:0;font-family:sans-serif;background:#f5f5f5}
+
+/* HEADER */
+header{
+background:#ffcc00;
+padding:10px;
+display:flex;
+align-items:center;
+gap:10px;
+}
+.logo{font-weight:bold;font-size:18px}
+.search{flex:1;padding:10px;border-radius:25px;border:none}
+
+/* CATEGORY */
+.categories{
+display:flex;
+overflow:auto;
+gap:10px;
+padding:10px;
+background:white;
+}
+.cat{padding:8px 12px;background:#eee;border-radius:20px}
+
+/* BANNER */
+.banner{
+padding:10px;
+}
+.banner img{width:100%;border-radius:10px}
+
+/* PRODUCTS */
+.products{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:10px;
+padding:10px;
+}
+.card{
+background:white;
+padding:10px;
+border-radius:10px;
+box-shadow:0 2px 6px rgba(0,0,0,0.2);
+}
+.card img{width:100%;border-radius:8px}
+.price{font-weight:bold}
+.old{text-decoration:line-through;color:gray;font-size:12px}
+
+.btn{padding:8px;margin-top:5px;border-radius:6px;text-align:center;color:white}
+.cartbtn{background:black}
+.wabtn{background:#25D366}
+.upi{background:#0070ba}
+
+/* CART */
+.cartpanel{
+position:fixed;
+bottom:0;
+left:0;
+width:100%;
+background:white;
+padding:15px;
+display:none;
+max-height:60%;
+overflow:auto;
 }
 
-header {
-  background:#3b2f2f;
-  color:#fff;
-  padding:15px;
-  text-align:center;
-  font-size:20px;
-  font-weight:bold;
+/* BOTTOM NAV */
+.bottomnav{
+position:fixed;
+bottom:0;
+width:100%;
+background:white;
+display:flex;
+justify-content:space-around;
+padding:10px;
 }
 
-.banner {
-  background:url('https://images.unsplash.com/photo-1503342217505-b0a15ec3261c');
-  background-size:cover;
-  height:200px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:white;
-  font-size:28px;
-  font-weight:bold;
-}
-
-.products {
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:12px;
-  padding:12px;
-}
-
-.card {
-  background:#fff;
-  border-radius:15px;
-  padding:10px;
-  box-shadow:0 6px 15px rgba(0,0,0,0.2);
-}
-
-.card img {
-  width:100%;
-  border-radius:10px;
-}
-
-.price {
-  font-weight:bold;
-  color:#000;
-}
-
-.old {
-  text-decoration:line-through;
-  color:gray;
-  font-size:12px;
-}
-
-.btn {
-  padding:8px;
-  margin-top:5px;
-  border-radius:8px;
-  text-align:center;
-  color:white;
-}
-
-.cart { background:#000; }
-.whatsapp { background:#25D366; }
-.upi { background:#0070ba; }
-
-.cartpanel {
-  position:fixed;
-  bottom:0;
-  width:100%;
-  background:white;
-  padding:15px;
-  display:none;
-  max-height:60%;
-  overflow:auto;
-}
-
-.float {
-  position:fixed;
-  bottom:80px;
-  right:15px;
-  background:#25D366;
-  color:white;
-  padding:15px;
-  border-radius:50%;
-}
-
-.footer {
-  background:#3b2f2f;
-  color:white;
-  text-align:center;
-  padding:15px;
-}
-
-</style></head><body><header>🤠 Cowboy Collections Mens Wear</header><div class="banner">Ride Your Style 🤠</div><div class="products" id="products"></div><div class="cartpanel" id="cartpanel"></div><div class="float" onclick="openWhatsApp()">💬</div><div class="footer">
-📍 Paramakudi | Mudukulathur <br>
-📞 9994931763 | 8838542843
+</style></head><body><header>
+<div class="logo">🤠 Cowboy</div>
+<input class="search" placeholder="Search cowboy styles..." oninput="search(this.value)">
+<div onclick="toggleCart()">🛒</div>
+</header><div class="categories">
+<div class="cat" onclick="filter('all')">All</div>
+<div class="cat" onclick="filter('tshirt')">Tshirts</div>
+<div class="cat" onclick="filter('shirt')">Shirts</div>
+<div class="cat" onclick="filter('pant')">Pants</div>
+</div><div class="banner">
+<img src="https://images.unsplash.com/photo-1503342217505-b0a15ec3261c">
+</div><div class="products" id="products"></div><div class="cartpanel" id="cartpanel"></div><div class="bottomnav">
+<div>🏠 Home</div>
+<div onclick="toggleCart()">🛒 Cart</div>
+<div>👤 Account</div>
 </div><script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDRMF6SkGsve8T5HoBoCDo8pzz8BUi7",
-  authDomain: "cowboy-collections.firebaseapp.com",
-  projectId: "cowboy-collections",
+const firebaseConfig={
+apiKey:"AIzaSyDRMF6SkGsve8T5HoBoCDo8pzz8BUi7",
+projectId:"cowboy-collections"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const app=initializeApp(firebaseConfig);
+const db=getFirestore(app);
 
-let cart = JSON.parse(localStorage.getItem("cart")) || [];
+let allProducts=[];
+let cart=JSON.parse(localStorage.getItem("cart"))||[];
 
 async function loadProducts(){
-  let snap = await getDocs(collection(db,"products"));
-  let html="";
-  snap.forEach(doc=>{
-    let p=doc.data();
-    html+=`
-    <div class="card">
-      <img src="${p.img}">
-      <h4>${p.name}</h4>
-      <p><span class="old">₹${Number(p.price)+300}</span> <span class="price">₹${p.price}</span></p>
-      <div class="btn cart" onclick="addCart('${p.name}','${p.price}')">Add to Cart</div>
-      <div class="btn whatsapp" onclick="orderWA('${p.name}','${p.price}')">WhatsApp</div>
-      <div class="btn upi" onclick="payUPI('${p.price}')">UPI Pay</div>
-    </div>`;
-  });
-  document.getElementById("products").innerHTML=html;
+let snap=await getDocs(collection(db,"products"));
+allProducts=[];
+snap.forEach(doc=>allProducts.push(doc.data()));
+show(allProducts);
+}
+
+function show(data){
+let html="";
+data.forEach(p=>{
+html+=`
+<div class="card">
+<img src="${p.img}">
+<h4>${p.name}</h4>
+<p><span class="old">₹${Number(p.price)+300}</span> <span class="price">₹${p.price}</span></p>
+<div class="btn cartbtn" onclick="addCart('${p.name}','${p.price}')">Add to Cart</div>
+<div class="btn wabtn" onclick="orderWA('${p.name}','${p.price}')">WhatsApp</div>
+<div class="btn upi" onclick="payUPI('${p.price}')">UPI Pay</div>
+</div>`;
+});
+
+document.getElementById("products").innerHTML=html;
+}
+
+window.search=function(q){
+let res=allProducts.filter(p=>p.name.toLowerCase().includes(q.toLowerCase()));
+show(res);
+}
+
+window.filter=function(type){
+if(type==='all'){show(allProducts);return}
+let res=allProducts.filter(p=>p.name.toLowerCase().includes(type));
+show(res);
 }
 
 window.addCart=function(name,price){
-  cart.push({name,price});
-  localStorage.setItem("cart",JSON.stringify(cart));
-  alert("Added 🔥");
+cart.push({name,price});
+localStorage.setItem("cart",JSON.stringify(cart));
+alert("Added 🔥");
 }
 
-window.openWhatsApp=function(){
-  if(cart.length===0){ alert("Cart empty"); return; }
-  let msg="Order:%0A";
-  let total=0;
-  cart.forEach(p=>{ msg+=`${p.name}-₹${p.price}%0A`; total+=Number(p.price); });
-  msg+=`Total ₹${total}`;
+window.toggleCart=function(){
+let panel=document.getElementById("cartpanel");
+panel.style.display=panel.style.display==='block'?'none':'block';
 
-  window.open(`https://wa.me/919994931763?text=${msg}`);
+let html="<h3>Cart 🛒</h3>";
+let total=0;
+
+cart.forEach((p,i)=>{
+html+=`${p.name}-₹${p.price} <button onclick="removeItem(${i})">❌</button><br>`;
+total+=Number(p.price);
+});
+
+html+=`<h4>Total ₹${total}</h4>`;
+html+=`<button onclick="checkout()">Checkout 🔥</button>`;
+
+panel.innerHTML=html;
+}
+
+window.removeItem=function(i){
+cart.splice(i,1);
+localStorage.setItem("cart",JSON.stringify(cart));
+toggleCart();
+}
+
+window.checkout=function(){
+let msg="Order:%0A";
+let total=0;
+cart.forEach(p=>{msg+=`${p.name}-₹${p.price}%0A`;total+=Number(p.price);});
+msg+=`Total ₹${total}`;
+
+let numbers=["919994931763","918838542843"];
+let random=numbers[Math.floor(Math.random()*numbers.length)];
+
+window.open(`https://wa.me/${random}?text=${msg}`);
 }
 
 window.orderWA=function(name,price){
-  let msg=`Buy ${name} ₹${price}`;
-  window.open(`https://wa.me/919994931763?text=${msg}`);
+window.open(`https://wa.me/919994931763?text=Buy ${name} ₹${price}`);
 }
 
 window.payUPI=function(price){
-  window.location.href=`upi://pay?pa=sachinsharma69545@okicici&pn=Cowboy&am=${price}&cu=INR`;
+window.location.href=`upi://pay?pa=sachinsharma69545@okicici&pn=Cowboy&am=${price}&cu=INR`;
 }
 
 loadProducts();
