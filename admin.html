@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Panel</title>
+</head>
+<body style="font-family:Arial; padding:20px; background:#111; color:white;">
+
+<h2>Add Product</h2>
+
+<input id="name" placeholder="Product Name"><br><br>
+<input id="price" placeholder="Price"><br><br>
+<input id="image" placeholder="Image URL"><br><br>
+
+<button onclick="addProduct()">Add Product</button>
+
+<h3>Products</h3>
+<div id="list"></div>
+
+<script>
+let products = JSON.parse(localStorage.getItem("products")) || [];
+
+function addProduct(){
+  let name = document.getElementById("name").value;
+  let price = document.getElementById("price").value;
+  let image = document.getElementById("image").value;
+
+  products.push({name, price, image});
+  localStorage.setItem("products", JSON.stringify(products));
+
+  showProducts();
+}
+
+function showProducts(){
+  let html = "";
+  products.forEach(p=>{
+    html += `<p>${p.name} - ₹${p.price}</p>`;
+  });
+  document.getElementById("list").innerHTML = html;
+}
+
+showProducts();
+</script>
+
+</body>
+</html>
