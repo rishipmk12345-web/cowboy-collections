@@ -18,44 +18,14 @@ display:flex;
 justify-content:space-between;
 padding:15px;
 background:#3E2723;
-color:#F5E9DA;
-font-weight:bold;
+color:white;
 }
 
 /* HERO */
-.hero{
-position:relative;
-}
 .hero img{
 width:100%;
-height:260px;
+height:250px;
 object-fit:cover;
-}
-.hero-text{
-position:absolute;
-bottom:20px;
-left:20px;
-color:white;
-}
-.hero button{
-padding:10px;
-background:#D4AF37;
-border:none;
-font-weight:bold;
-}
-
-/* CATEGORY */
-.categories{
-display:flex;
-overflow:auto;
-padding:10px;
-gap:10px;
-}
-.cat{
-background:#8D6E63;
-color:white;
-padding:10px 15px;
-border-radius:20px;
 }
 
 /* PRODUCTS */
@@ -68,8 +38,7 @@ padding:10px;
 .card{
 background:white;
 padding:10px;
-border-radius:15px;
-box-shadow:0 4px 10px rgba(0,0,0,0.1);
+border-radius:10px;
 }
 .card img{
 width:100%;
@@ -79,36 +48,19 @@ border-radius:10px;
 /* BUTTON */
 .btn{
 width:100%;
-padding:10px;
-margin-top:5px;
+padding:8px;
 background:#3E2723;
 color:white;
 border:none;
-border-radius:8px;
+margin-top:5px;
 }
 
 /* CART */
 .cart{
 padding:10px;
 background:#fff3e0;
-border-radius:10px;
 margin:10px;
-}
-
-/* LOCATION */
-.location{
-padding:15px;
-text-align:center;
-}
-
-/* WHATSAPP FLOAT */
-.wa{
-position:fixed;
-bottom:20px;
-right:20px;
-background:#25D366;
-padding:15px;
-border-radius:50%;
+border-radius:10px;
 }
 </style>
 </head>
@@ -116,98 +68,53 @@ border-radius:50%;
 <body>
 
 <div class="header">
-<div>🤠</div>
-<div>🐎 Cowboy Collections</div>
+<div>🤠 Cowboy Collections</div>
 <div>🛒</div>
 </div>
 
-<!-- HERO -->
 <div class="hero">
 <img src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b">
-<div class="hero-text">
-<h2>🤠 Western Style 🔥</h2>
-<button onclick="scrollToProducts()">Shop Now</button>
-</div>
 </div>
 
-<!-- CATEGORY -->
-<div class="categories">
-<div class="cat" onclick="filterProducts('all')">🔥 All</div>
-<div class="cat" onclick="filterProducts('shirt')">👕 Shirts</div>
-<div class="cat" onclick="filterProducts('tshirt')">👕 T-Shirts</div>
-<div class="cat" onclick="filterProducts('hoodie')">🧥 Hoodies</div>
-<div class="cat" onclick="filterProducts('pants')">👖 Pants</div>
-</div>
-
-<h2 style="padding:10px;">🔥 Best Sellers</h2>
+<h2 style="padding:10px;">🔥 Products</h2>
 
 <div class="products" id="products"></div>
 
 <div class="cart">
-<h3>🛒 Cart</h3>
+<h3>Cart</h3>
 <div id="cartItems"></div>
 <h3>Total ₹<span id="total">0</span></h3>
 
-<button class="btn" onclick="orderMain()">Order (Main)</button>
-<button class="btn" onclick="orderAlt()">Order (Alt)</button>
-
+<button class="btn" onclick="pay()">Pay via UPI 💳</button>
 </div>
-
-<!-- LOCATION -->
-<div class="location">
-<h3>📍 Our Stores</h3>
-<p>🤠 Paramakudi</p>
-<p>🤠 Mudukulathur</p>
-<p>📞 8838542843 / 9994931763</p>
-</div>
-
-<a href="https://wa.me/918838542843" class="wa">💬</a>
 
 <script>
 
-let products=[
-{name:"Linen Pant 👖",price:999,category:"pants",img:"https://images.unsplash.com/photo-1602293589930-45aad59ba3ab"},
-{name:"Acid Wash Tee 👕",price:799,category:"tshirt",img:"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab"},
-{name:"Drop Shoulder 🔥",price:899,category:"tshirt",img:"https://images.unsplash.com/photo-1503342217505-b0a15ec3261c"},
-{name:"Hoodie 🧥",price:1299,category:"hoodie",img:"https://images.unsplash.com/photo-1556821840-3a63f95609a7"},
-{name:"Casual Shirt 👕",price:1099,category:"shirt",img:"https://images.unsplash.com/photo-1596755094514-f87e34085b2c"}
-];
+/* LOAD PRODUCTS FROM ADMIN */
+let products = JSON.parse(localStorage.getItem("products")) || [];
 
 let cart=[];
 
-/* DISPLAY PRODUCTS */
-function displayProducts(list=products){
+function display(){
 let html="";
-list.forEach((p)=>{
+products.forEach((p,i)=>{
 html+=`
 <div class="card">
 <img src="${p.img}">
 <h3>${p.name}</h3>
 <p>₹${p.price}</p>
-<button class="btn" onclick="addToCart('${p.name}',${p.price})">Add</button>
+<button class="btn" onclick="add(${i})">Add</button>
 </div>`;
 });
 document.getElementById("products").innerHTML=html;
 }
 
-/* FILTER */
-function filterProducts(type){
-if(type==="all"){
-displayProducts(products);
-}else{
-let filtered=products.filter(p=>p.category===type);
-displayProducts(filtered);
-}
+function add(i){
+cart.push(products[i]);
+showCart();
 }
 
-/* ADD TO CART */
-function addToCart(name,price){
-cart.push({name,price});
-displayCart();
-}
-
-/* DISPLAY CART */
-function displayCart(){
+function showCart(){
 let html="";
 let total=0;
 
@@ -220,36 +127,23 @@ document.getElementById("cartItems").innerHTML=html;
 document.getElementById("total").innerText=total;
 }
 
-/* ORDER FUNCTION */
-function sendOrder(num){
+/* PAYMENT */
+function pay(){
 if(cart.length==0){
 alert("Cart empty");
 return;
 }
 
-let msg="Hi, I want to order:%0A";
-cart.forEach(item=>{
-msg+=item.name+" - ₹"+item.price+"%0A";
-});
+let total=0;
+cart.forEach(i=>total+=i.price);
 
-window.open("https://wa.me/"+num+"?text="+msg);
+/* CHANGE THIS UPI ID */
+let upi="upi://pay?pa=YOURUPI@upi&pn=CowboyCollections&am="+total;
+
+window.open(upi);
 }
 
-/* TWO NUMBERS */
-function orderMain(){
-sendOrder("9199994931763");
-}
-
-function orderAlt(){
-sendOrder("918838542843");
-}
-
-/* SCROLL */
-function scrollToProducts(){
-document.getElementById("products").scrollIntoView();
-}
-
-displayProducts();
+display();
 
 </script>
 
