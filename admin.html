@@ -1,3 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Panel 🤠</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+body{
+font-family:sans-serif;
+background:#f5e6d3;
+padding:20px;
+}
+input{
+width:100%;
+padding:10px;
+margin:5px 0;
+}
+button{
+width:100%;
+padding:10px;
+background:#3b2f2f;
+color:white;
+border:none;
+margin-top:5px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>🤠 Admin Panel</h2>
+
+<input id="name" placeholder="Product Name">
+<input id="price" placeholder="Price">
+<input id="img" placeholder="Image URL">
+
+<button onclick="addProduct()">Add Product 🔥</button>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -19,10 +57,20 @@ let name=document.getElementById("name").value;
 let price=document.getElementById("price").value;
 let img=document.getElementById("img").value;
 
+if(!name || !price || !img){
+alert("Fill all fields ❌");
+return;
+}
+
 await addDoc(collection(db,"products"),{
-name,price,img
+name:name,
+price:price,
+img:img
 });
 
 alert("Product Added 🔥");
 }
 </script>
+
+</body>
+</html>
