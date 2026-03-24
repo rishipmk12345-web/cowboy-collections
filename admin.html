@@ -1,44 +1,90 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Admin Panel</title>
+<title>Admin Panel 🤠</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body{
+font-family:Arial;
+padding:20px;
+background:#F5E9DA;
+}
+input,select{
+width:100%;
+padding:10px;
+margin:5px 0;
+}
+button{
+padding:10px;
+background:#3E2723;
+color:white;
+border:none;
+width:100%;
+}
+.card{
+background:white;
+padding:10px;
+margin-top:10px;
+}
+</style>
 </head>
-<body style="font-family:Arial; padding:20px; background:#111; color:white;">
 
-<h2>Add Product</h2>
+<body>
 
-<input id="name" placeholder="Product Name"><br><br>
-<input id="price" placeholder="Price"><br><br>
-<input id="image" placeholder="Image URL"><br><br>
+<h2>🤠 Add Product</h2>
+
+<input id="name" placeholder="Product name">
+<input id="price" placeholder="Price">
+<input id="img" placeholder="Image URL">
+<select id="cat">
+<option value="shirt">Shirt</option>
+<option value="tshirt">T-Shirt</option>
+<option value="pants">Pants</option>
+<option value="hoodie">Hoodie</option>
+</select>
 
 <button onclick="addProduct()">Add Product</button>
 
-<h3>Products</h3>
+<h2>📦 Products</h2>
 <div id="list"></div>
 
 <script>
+
 let products = JSON.parse(localStorage.getItem("products")) || [];
 
 function addProduct(){
-  let name = document.getElementById("name").value;
-  let price = document.getElementById("price").value;
-  let image = document.getElementById("image").value;
+let p = {
+name:document.getElementById("name").value,
+price:Number(document.getElementById("price").value),
+img:document.getElementById("img").value,
+category:document.getElementById("cat").value
+};
 
-  products.push({name, price, image});
-  localStorage.setItem("products", JSON.stringify(products));
-
-  showProducts();
+products.push(p);
+localStorage.setItem("products", JSON.stringify(products));
+show();
 }
 
-function showProducts(){
-  let html = "";
-  products.forEach(p=>{
-    html += `<p>${p.name} - ₹${p.price}</p>`;
-  });
-  document.getElementById("list").innerHTML = html;
+function show(){
+let html="";
+products.forEach((p,i)=>{
+html+=`
+<div class="card">
+<p>${p.name} - ₹${p.price}</p>
+<button onclick="del(${i})">Delete</button>
+</div>`;
+});
+document.getElementById("list").innerHTML=html;
 }
 
-showProducts();
+function del(i){
+products.splice(i,1);
+localStorage.setItem("products", JSON.stringify(products));
+show();
+}
+
+show();
+
 </script>
 
 </body>
