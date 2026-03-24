@@ -1,38 +1,101 @@
-<!DOCTYPE html><html>
+<!DOCTYPE html>
+<html>
 <head>
+<title>🤠 Cowboy Collections Mens Wear</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cowboy Collections 🤠</title><style>
-body{margin:0;font-family:sans-serif;background:#f5f5f5}
-header{background:#ffcc00;padding:10px;display:flex;justify-content:space-between}
-.logo{font-weight:bold}
-.products{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:10px}
-.card{background:white;padding:10px;border-radius:10px}
-.btn{padding:8px;margin-top:5px;color:white;border-radius:5px;text-align:center}
-.cart{background:black}
-.wa{background:#25D366}
-.upi{background:#0070ba}
 
-.lock{position:fixed;top:0;left:0;width:100%;height:100%;background:black;color:white;display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:999}
-.lock input{padding:10px;margin:10px;border-radius:5px;border:none}
-.lock button{padding:10px 20px;border:none;background:#ffcc00}
+<style>
+body { margin:0; font-family: Arial; background:#f5f5f5; }
 
-.orders{padding:10px}
-</style></head><body><!-- LOGIN LOCK --><div class="lock" id="lock">
-<h2>🔐 Login</h2>
-<input id="email" placeholder="Email">
-<input id="pass" type="password" placeholder="Password">
-<button onclick="signup()">Signup</button>
-<button onclick="login()">Login</button>
-</div><header>
-<div class="logo">🤠 Cowboy</div>
-<div onclick="loadMyOrders()">📦 My Orders</div>
-<div onclick="logout()">🚪 Logout</div>
-</header><div class="products" id="products"></div>
-<div class="orders" id="orders"></div><script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, getDocs, addDoc, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+/* Header */
+.header {
+  background:#ffcc00;
+  padding:15px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-weight:bold;
+}
 
+/* Products */
+.grid {
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+  padding:10px;
+}
+
+.card {
+  background:white;
+  border-radius:12px;
+  padding:10px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.1);
+}
+
+.card img {
+  width:100%;
+  border-radius:10px;
+}
+
+.btn {
+  width:100%;
+  padding:10px;
+  margin-top:5px;
+  border:none;
+  border-radius:8px;
+  font-weight:bold;
+}
+
+.cart { background:black; color:white; }
+.wa { background:green; color:white; }
+.upi { background:#0077ff; color:white; }
+
+/* Login */
+.loginBox {
+  position:fixed;
+  bottom:0;
+  width:100%;
+  background:white;
+  padding:15px;
+  border-radius:20px 20px 0 0;
+  box-shadow:0 -2px 10px rgba(0,0,0,0.2);
+}
+
+input {
+  width:100%;
+  padding:10px;
+  margin:5px 0;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  🤠 Cowboy Collections
+  <button onclick="logout()">Logout</button>
+</div>
+
+<!-- PRODUCTS -->
+<div class="grid" id="products"></div>
+
+<!-- LOGIN -->
+<div class="loginBox" id="loginBox">
+  <h3>Login 🔐</h3>
+  <input id="email" placeholder="Email">
+  <input id="password" type="password" placeholder="Password">
+  <button onclick="signup()">Signup</button>
+  <button onclick="login()">Login</button>
+</div>
+
+<!-- FIREBASE -->
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+/* 🔥 YOUR CONFIG */
 const firebaseConfig = {
   apiKey: "AIzaSyDRMF6SkGsve8T5HoBoCDo8pzz8BUi7zoQ",
   authDomain: "cowboy-collections.firebaseapp.com",
@@ -43,104 +106,80 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
-let allProducts=[];
-let cart=[];
+/* PRODUCTS */
+const products = [
+  {name:"Tshirt 🤠", price:699, img:"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab"},
+  {name:"Shirt 🤠", price:899, img:"https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf"},
+  {name:"Trackpant 🤠", price:799, img:"https://images.unsplash.com/photo-1593030761757-71fae45fa0e7"}
+];
 
-// LOGIN
-window.signup=()=>{
-let email=document.getElementById("email").value;
-let pass=document.getElementById("pass").value;
-createUserWithEmailAndPassword(auth,email,pass)
-.then(()=>alert("Signup success"))
-.catch(e=>alert(e.message));
+const productDiv = document.getElementById("products");
+
+products.forEach(p=>{
+  productDiv.innerHTML += `
+    <div class="card">
+      <img src="${p.img}">
+      <h4>${p.name}</h4>
+      <p>₹${p.price}</p>
+      <button class="btn cart" onclick="order('${p.name}',${p.price})">Order</button>
+      <button class="btn wa" onclick="whatsapp('${p.name}')">WhatsApp</button>
+      <button class="btn upi">UPI</button>
+    </div>
+  `;
+});
+
+/* AUTH */
+window.signup = ()=>{
+  createUserWithEmailAndPassword(auth,email.value,password.value)
+  .then(()=>alert("Signup Success"))
+  .catch(e=>alert(e.message));
 }
 
-window.login=()=>{
-let email=document.getElementById("email").value;
-let pass=document.getElementById("pass").value;
-signInWithEmailAndPassword(auth,email,pass)
-.then(()=>{
-document.getElementById("lock").style.display="none";
-loadProducts();
-})
-.catch(e=>alert(e.message));
+window.login = ()=>{
+  signInWithEmailAndPassword(auth,email.value,password.value)
+  .then(()=>alert("Login Success"))
+  .catch(e=>alert(e.message));
 }
 
-window.logout=()=>{
-signOut(auth);
-location.reload();
+window.logout = ()=>{
+  signOut(auth);
 }
 
+/* LOGIN CHECK */
 onAuthStateChanged(auth,user=>{
-if(user){
-document.getElementById("lock").style.display="none";
-loadProducts();
-}
+  if(user){
+    loginBox.style.display="none";
+  } else {
+    loginBox.style.display="block";
+  }
 });
 
-// PRODUCTS
-async function loadProducts(){
-let snap=await getDocs(collection(db,"products"));
-allProducts=[];
-snap.forEach(doc=>allProducts.push(doc.data()));
-show();
+/* ORDER SAVE */
+window.order = async(name,price)=>{
+  if(!auth.currentUser){
+    alert("Login first");
+    return;
+  }
+
+  await addDoc(collection(db,"orders"),{
+    product:name,
+    price:price,
+    userId:auth.currentUser.uid,
+    date:new Date().toISOString()
+  });
+
+  alert("Order placed 🔥");
 }
 
-function show(){
-let html="";
-allProducts.forEach(p=>{
-html+=`<div class="card">
-<img src="${p.img}" width="100%">
-<h4>${p.name}</h4>
-<p>₹${p.price}</p>
-<div class="btn cart" onclick="addCart('${p.name}','${p.price}')">Add Cart</div>
-<div class="btn wa" onclick="order('${p.name}','${p.price}')">WhatsApp</div>
-<div class="btn upi" onclick="pay('${p.price}')">UPI</div>
-</div>`;
-});
-document.getElementById("products").innerHTML=html;
+/* WHATSAPP */
+window.whatsapp = (name)=>{
+  window.open(`https://wa.me/919994931763?text=I want ${name}`);
 }
 
-window.addCart=(n,p)=>{cart.push({name:n,price:p});alert("Added")}
+</script>
 
-// ORDER SAVE (PRIVATE)
-window.order=async(n,p)=>{
-let user=auth.currentUser;
-
-await addDoc(collection(db,"orders"),{
-userId:user.uid,
-name:n,
-price:p,
-date:new Date().toISOString()
-});
-
-window.open(`https://wa.me/919994931763?text=Buy ${n} ₹${p}`);
-}
-
-window.pay=p=>window.location.href=`upi://pay?pa=sachinsharma69545@okicici&pn=Cowboy&am=${p}&cu=INR`;
-
-// PRIVATE ORDERS
-window.loadMyOrders=async()=>{
-let user=auth.currentUser;
-
-let q=query(collection(db,"orders"),where("userId","==",user.uid));
-let snap=await getDocs(q);
-
-let html="<h3>My Orders</h3>";
-
-snap.forEach(doc=>{
-let o=doc.data();
-html+=`<div style='border:1px solid #ccc;padding:10px;margin:10px 0'>
-${o.name} - ₹${o.price}<br>
-<small>${o.date}</small>
-</div>`;
-});
-
-document.getElementById("orders").innerHTML=html;
-}
-
-</script></body>
+</body>
 </html>
