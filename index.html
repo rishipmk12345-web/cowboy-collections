@@ -1,158 +1,30 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>🤠 Cowboy Collections</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-<style>
-body{
-margin:0;
-font-family:'Segoe UI';
-background:#F5E6D3;
-color:#3b2f2f;
-}
+const firebaseConfig = {
+  apiKey: "AIzaSyDRMF6SkGsve8T5HoBoCDo8pzz8BU",
+  authDomain: "cowboy-collections.firebaseapp.com",
+  projectId: "cowboy-collections",
+};
 
-/* HEADER */
-.header{
-display:flex;
-justify-content:space-between;
-padding:15px;
-background:#3b2f2f;
-color:#fff;
-font-weight:bold;
-}
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-/* HERO */
-.hero img{
-width:100%;
-height:260px;
-object-fit:cover;
-}
+async function loadProducts(){
+const querySnapshot = await getDocs(collection(db,"products"));
 
-/* TITLE */
-.title{
-padding:10px;
-font-size:20px;
-font-weight:bold;
-}
-
-/* PRODUCTS */
-.products{
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:10px;
-padding:10px;
-}
-
-.card{
-background:white;
-border-radius:12px;
-overflow:hidden;
-box-shadow:0 3px 8px rgba(0,0,0,0.1);
-}
-
-.card img{
-width:100%;
-height:170px;
-object-fit:cover;
-}
-
-.cardBody{
-padding:10px;
-}
-
-.price{
-font-weight:bold;
-color:#8B4513;
-}
-
-.tag{
-color:green;
-font-size:12px;
-}
-
-/* BUTTON */
-.btn{
-width:100%;
-padding:10px;
-margin-top:6px;
-border:none;
-border-radius:6px;
-background:#3b2f2f;
-color:white;
-font-weight:bold;
-}
-
-/* CART */
-.cart{
-background:#fff8f0;
-margin:10px;
-padding:10px;
-border-radius:10px;
-}
-
-/* WHATSAPP */
-.whatsapp{
-position:fixed;
-bottom:20px;
-right:20px;
-background:#25D366;
-color:white;
-padding:14px;
-border-radius:50%;
-font-size:20px;
-text-decoration:none;
-}
-</style>
-</head>
-
-<body>
-
-<div class="header">
-<div>🤠 Cowboy Collections</div>
-<div>🛒 Cart</div>
-</div>
-
-<div class="hero">
-<img src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b">
-</div>
-
-<div class="title">🔥 Best Sellers</div>
-
-<div class="products" id="products"></div>
-
-<div class="cart">
-<h3>🛒 Your Cart</h3>
-<div id="cartItems"></div>
-<h3>Total ₹<span id="total">0</span></h3>
-<button class="btn" onclick="pay()">Pay via UPI 💳</button>
-</div>
-
-<a class="whatsapp" href="https://wa.me/919994931763">💬</a>
-
-<script>
-
-/* 🔥 ADMIN CONNECT */
-let products = JSON.parse(localStorage.getItem("products")) || [];
-
-/* DISPLAY PRODUCTS */
-function display(){
 let html="";
+querySnapshot.forEach(doc=>{
+let p=doc.data();
 
-if(products.length === 0){
-html="<p style='padding:10px;'>No products added yet 😢</p>";
-}
-
-products.forEach((p,i)=>{
 html+=`
 <div class="card">
 <img src="${p.img}">
 <div class="cardBody">
 <h4>${p.name}</h4>
 <p class="price">₹${p.price}</p>
-<p class="tag">🔥 Limited Stock</p>
-<button class="btn" onclick="add(${i})">Add to Cart</button>
-<button class="btn" onclick="orderWA('${p.name}',${p.price})">Order via WhatsApp</button>
+<button class="btn" onclick="orderWA('${p.name}',${p.price})">Order</button>
 </div>
 </div>`;
 });
@@ -160,50 +32,5 @@ html+=`
 document.getElementById("products").innerHTML=html;
 }
 
-/* CART */
-let cart=[];
-
-function add(i){
-cart.push(products[i]);
-showCart();
-}
-
-function showCart(){
-let html="";
-let total=0;
-
-cart.forEach(item=>{
-html+=`<p>${item.name} - ₹${item.price}</p>`;
-total+=Number(item.price);
-});
-
-document.getElementById("cartItems").innerHTML=html;
-document.getElementById("total").innerText=total;
-}
-
-/* PAYMENT */
-function pay(){
-if(cart.length==0){
-alert("Cart empty");
-return;
-}
-
-let total=0;
-cart.forEach(i=>total+=Number(i.price));
-
-let upi="upi://pay?pa=sachinsharma69545@okicici&pn=CowboyCollections&am="+total+"&cu=INR";
-window.open(upi);
-}
-
-/* WHATSAPP */
-function orderWA(name,price){
-let msg="Hi, I want to order: "+name+" Price: ₹"+price;
-window.open("https://wa.me/919994931763?text="+encodeURIComponent(msg));
-}
-
-display();
-
+loadProducts();
 </script>
-
-</body>
-</html>
