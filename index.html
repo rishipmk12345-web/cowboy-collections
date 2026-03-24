@@ -132,12 +132,29 @@ window.payUPI=price=>window.location.href=`upi://pay?pa=sachinsharma69545@okicic
 window.openLogin=()=>document.getElementById("login").style.display="flex";
 window.closeLogin=()=>document.getElementById("login").style.display="none";
 
-window.openAdmin=async()=>{
+window.openAdmin = async () => {
+
+let pass = prompt("Enter Admin Password 🔐");
+
+if(pass !== "04032026"){
+  alert("Wrong Password ❌");
+  return;
+}
+
 let panel=document.getElementById("adminPanel");panel.style.display="block";
 let snap=await getDocs(collection(db,"orders"));
 let html="<h2>Orders</h2>";
-snap.forEach(doc=>{let o=doc.data();html+=`<div style='border:1px solid #ccc;padding:10px;margin:10px 0'><b>${o.name}</b><br>${o.phone}<br>${o.address}<br>`;o.cart.forEach(i=>{html+=`${i.name}-₹${i.price}<br>`});html+=`<small>${o.date}</small></div>`});
+
+snap.forEach(doc=>{
+  let o=doc.data();
+  html+=`<div style='border:1px solid #ccc;padding:10px;margin:10px 0'>
+  <b>${o.name}</b><br>${o.phone}<br>${o.address}<br>`;
+  o.cart.forEach(i=>{html+=`${i.name}-₹${i.price}<br>`});
+  html+=`<small>${o.date}</small></div>`;
+});
+
 html+="<button onclick='document.getElementById(\"adminPanel\").style.display=\"none\"'>Close</button>";
+
 panel.innerHTML=html;
 }
 
