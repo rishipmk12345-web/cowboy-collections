@@ -4,99 +4,36 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cowboy Collections 🤠</title><style>
 body { margin:0; font-family: Arial; background:#f5f2e9; }
-
-header {
-  background:linear-gradient(90deg,#ffcc00,#ff9900);
-  padding:12px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  font-weight:bold;
-}
-
-.logo { font-size:20px; }
-
-.search {
-  margin:10px;
-  padding:10px;
-  border-radius:25px;
-  border:none;
-  width:90%;
-  box-shadow:0 2px 8px rgba(0,0,0,0.2);
-}
-
-.banner {
-  margin:10px;
-  border-radius:15px;
-  overflow:hidden;
-}
-.banner img { width:100%; border-radius:15px; }
-
-.categories {
-  display:flex;
-  overflow-x:auto;
-  padding:10px;
-  gap:10px;
-}
-.cat {
-  min-width:90px;
-  background:white;
-  border-radius:12px;
-  padding:10px;
-  text-align:center;
-  box-shadow:0 4px 10px rgba(0,0,0,0.15);
-}
-
-.products {
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:10px;
-  padding:10px;
-}
-
-.card {
-  background:white;
-  border-radius:15px;
-  padding:10px;
-  box-shadow:0 4px 12px rgba(0,0,0,0.2);
-}
-
+header { background:linear-gradient(90deg,#ffcc00,#ff9900); padding:12px; display:flex; justify-content:space-between; }
+.search { margin:10px; padding:12px; border-radius:25px; border:none; width:90%; }
+.products { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; padding:10px; }
+.card { background:white; border-radius:15px; padding:10px; box-shadow:0 4px 12px rgba(0,0,0,0.2); position:relative; }
 .card img { width:100%; border-radius:10px; }
-
+.badge { position:absolute; top:10px; left:10px; background:red; color:white; padding:4px 6px; font-size:12px; border-radius:5px; }
 .price { font-weight:bold; }
-
-.buy {
-  background:#25D366;
-  color:white;
-  padding:8px;
-  text-align:center;
-  border-radius:8px;
-  margin-top:5px;
+.old { text-decoration:line-through; color:gray; font-size:12px; }
+.buy { background:black; color:white; padding:8px; text-align:center; border-radius:8px; margin-top:5px; }
+.green { background:#25D366; }
+.blue { background:#0070ba; }
+.popup {
+position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6);
+display:none; align-items:center; justify-content:center;
 }
-
-.upi { background:#0070ba; }
-
-.footer {
-  background:black;
-  color:white;
-  padding:15px;
-  text-align:center;
+.popup-content {
+background:white; padding:20px; border-radius:15px; width:90%;
 }
-
-</style></head><body><header>
-<div class="logo">🤠 Cowboy</div>
-<div>🛒</div>
-</header><input class="search" placeholder="Search products..."><div class="banner">
-<img src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b">
-</div><div class="categories">
-<div class="cat" onclick="filterProducts('all')">All</div>
-<div class="cat" onclick="filterProducts('Tshirt')">Tshirt</div>
-<div class="cat" onclick="filterProducts('Shirt')">Shirt</div>
-<div class="cat" onclick="filterProducts('Trackpant')">Bottom</div>
-</div><div class="products" id="products"></div><div class="footer">
-📍 Paramakudi | Mudukulathur <br>
-📞 9994931763 | 8838542843
-</div><script type="module">
+.popup img { width:100%; border-radius:10px; }
+.whatsapp-float {
+position:fixed; bottom:80px; right:15px;
+background:#25D366; color:white; padding:15px; border-radius:50%; font-size:20px;
+}
+</style></head><body>
+<header>
+<div>🤠 Cowboy Collections Mens Wear</div>
+<div onclick="openCart()">🛒</div>
+</header><input class="search" placeholder="Search cowboy styles..."><div class="products" id="products"></div><div class="popup" id="popup">
+<div class="popup-content" id="popupContent"></div>
+</div><div class="whatsapp-float" onclick="openCart()">💬</div><script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
@@ -104,54 +41,70 @@ const firebaseConfig = {
   apiKey: "AIzaSyDRMF6SkGsve8T5HoBoCDo8pzz8BUi7",
   authDomain: "cowboy-collections.firebaseapp.com",
   projectId: "cowboy-collections",
-  storageBucket: "cowboy-collections.appspot.com",
-  messagingSenderId: "669293200742",
-  appId: "1:669293200742:web:137e00ca5386a811eb4a7"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 let allProducts = [];
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
 async function loadProducts() {
-  const querySnapshot = await getDocs(collection(db, "products"));
+  const snap = await getDocs(collection(db, "products"));
   allProducts = [];
-  querySnapshot.forEach((doc) => {
-    allProducts.push(doc.data());
-  });
-  displayProducts(allProducts);
+  snap.forEach(doc=>allProducts.push(doc.data()));
+  show(allProducts);
 }
 
-function displayProducts(products) {
-  const container = document.getElementById("products");
-  container.innerHTML = "";
-
-  products.forEach(p => {
-    container.innerHTML += `
-      <div class="card">
-        <img src="${p.img}">
-        <h4>${p.name}</h4>
-        <p class="price">₹${p.price}</p>
-        <div class="buy" onclick="orderWhatsApp('${p.name}','${p.price}')">WhatsApp</div>
-        <div class="buy upi" onclick="upiPay('${p.price}')">UPI</div>
-      </div>
-    `;
-  });
+function show(products){
+  let c = document.getElementById("products");
+  c.innerHTML="";
+  products.forEach(p=>{
+    c.innerHTML += `
+    <div class="card" onclick="openPopup('${p.img}','${p.name}','${p.price}')">
+    <div class="badge">🔥 SALE</div>
+    <img src="${p.img}">
+    <h4>${p.name}</h4>
+    <p><span class="old">₹${Number(p.price)+300}</span> <span class="price">₹${p.price}</span></p>
+    <div class="buy" onclick="event.stopPropagation();addCart('${p.name}','${p.price}')">Add to Cart</div>
+    <div class="buy green" onclick="event.stopPropagation();buyNow('${p.name}','${p.price}')">Buy Now</div>
+    </div>`;
+  })
 }
 
-window.filterProducts = function(type) {
-  if(type==='all') displayProducts(allProducts);
-  else displayProducts(allProducts.filter(p=>p.name.includes(type)));
+window.openPopup = function(img,name,price){
+  document.getElementById("popup").style.display="flex";
+  document.getElementById("popupContent").innerHTML=`
+  <img src="${img}">
+  <h3>${name}</h3>
+  <p>₹${price}</p>
+  <div class="buy" onclick="addCart('${name}','${price}')">Add to Cart</div>
+  <div class="buy green" onclick="buyNow('${name}','${price}')">Buy Now</div>
+  `;
 }
 
-window.orderWhatsApp = function(name, price) {
-  let msg = `Hi, I want ${name} ₹${price}`;
-  window.open(`https://wa.me/919994931763?text=${encodeURIComponent(msg)}`);
+window.onclick = function(e){
+  if(e.target.id==="popup") document.getElementById("popup").style.display="none";
 }
 
-window.upiPay = function(price) {
-  window.location.href = `upi://pay?pa=sachinsharma69545@okicici&pn=Cowboy&am=${price}&cu=INR`;
+window.addCart = function(name,price){
+  cart.push({name,price});
+  localStorage.setItem("cart",JSON.stringify(cart));
+  alert("Added 🔥");
+}
+
+window.openCart = function(){
+  if(cart.length===0){alert("Cart empty 😢"); return}
+  let msg="Order:%0A";
+  let total=0;
+  cart.forEach(p=>{ msg+=`${p.name}-₹${p.price}%0A`; total+=Number(p.price); });
+  msg+=`Total ₹${total}`;
+  window.open(`https://wa.me/919994931763?text=${msg}`);
+}
+
+window.buyNow = function(name,price){
+  let msg=`Buy ${name} ₹${price}`;
+  window.open(`https://wa.me/919994931763?text=${msg}`);
 }
 
 loadProducts();
