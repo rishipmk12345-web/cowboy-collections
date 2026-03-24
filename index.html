@@ -2,19 +2,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cowboy Collections Mens Wear 🤠</title><style>
-body{margin:0;font-family:sans-serif;background:#f5f5f5}
+<title>🤠 Cowboy Collections Mens Wear</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:sans-serif;background:#f1f3f6}
 
 /* HEADER */
 header{
 background:#ffcc00;
-padding:10px;
+padding:12px;
 display:flex;
 align-items:center;
 gap:10px;
+position:sticky;top:0;z-index:10;
 }
 .logo{font-weight:bold;font-size:18px}
 .search{flex:1;padding:10px;border-radius:25px;border:none}
+.icon{font-size:20px}
 
 /* CATEGORY */
 .categories{
@@ -24,37 +27,41 @@ gap:10px;
 padding:10px;
 background:white;
 }
-.cat{padding:8px 12px;background:#eee;border-radius:20px}
+.cat{padding:8px 14px;background:#eee;border-radius:20px;font-size:14px}
 
-/* BANNER */
-.banner{
-padding:10px;
+/* BANNER SLIDER */
+.slider{overflow:hidden}
+.slides{display:flex;animation:slide 10s infinite}
+.slides img{width:100%}
+@keyframes slide{
+0%{transform:translateX(0)}
+33%{transform:translateX(-100%)}
+66%{transform:translateX(-200%)}
 }
-.banner img{width:100%;border-radius:10px}
 
 /* PRODUCTS */
 .products{
 display:grid;
 grid-template-columns:repeat(2,1fr);
-gap:10px;
-padding:10px;
+gap:12px;
+padding:12px;
 }
 .card{
 background:white;
 padding:10px;
-border-radius:10px;
-box-shadow:0 2px 6px rgba(0,0,0,0.2);
+border-radius:12px;
+box-shadow:0 4px 10px rgba(0,0,0,0.15);
 }
-.card img{width:100%;border-radius:8px}
+.card img{width:100%;border-radius:10px}
 .price{font-weight:bold}
 .old{text-decoration:line-through;color:gray;font-size:12px}
 
-.btn{padding:8px;margin-top:5px;border-radius:6px;text-align:center;color:white}
+.btn{padding:8px;margin-top:6px;border-radius:8px;text-align:center;color:white;font-size:14px}
 .cartbtn{background:black}
 .wabtn{background:#25D366}
 .upi{background:#0070ba}
 
-/* CART */
+/* CART PANEL */
 .cartpanel{
 position:fixed;
 bottom:0;
@@ -65,6 +72,20 @@ padding:15px;
 display:none;
 max-height:60%;
 overflow:auto;
+border-radius:15px 15px 0 0;
+box-shadow:0 -4px 10px rgba(0,0,0,0.3);
+}
+
+/* FLOAT CHAT */
+.chat{
+position:fixed;
+bottom:70px;
+right:15px;
+background:#25D366;
+padding:12px;
+border-radius:50%;
+color:white;
+font-size:18px;
 }
 
 /* BOTTOM NAV */
@@ -76,20 +97,25 @@ background:white;
 display:flex;
 justify-content:space-around;
 padding:10px;
+border-top:1px solid #ddd;
 }
 
 </style></head><body><header>
 <div class="logo">🤠 Cowboy</div>
-<input class="search" placeholder="Search cowboy styles..." oninput="search(this.value)">
-<div onclick="toggleCart()">🛒</div>
+<input class="search" placeholder="Search products..." oninput="search(this.value)">
+<div class="icon" onclick="toggleCart()">🛒</div>
 </header><div class="categories">
 <div class="cat" onclick="filter('all')">All</div>
 <div class="cat" onclick="filter('tshirt')">Tshirts</div>
 <div class="cat" onclick="filter('shirt')">Shirts</div>
-<div class="cat" onclick="filter('pant')">Pants</div>
-</div><div class="banner">
+<div class="cat" onclick="filter('pant')">Trackpants</div>
+</div><!-- SLIDER --><div class="slider">
+<div class="slides">
 <img src="https://images.unsplash.com/photo-1503342217505-b0a15ec3261c">
-</div><div class="products" id="products"></div><div class="cartpanel" id="cartpanel"></div><div class="bottomnav">
+<img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab">
+<img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f">
+</div>
+</div><div class="products" id="products"></div><div class="cartpanel" id="cartpanel"></div><div class="chat" onclick="openWA()">💬</div><div class="bottomnav">
 <div>🏠 Home</div>
 <div onclick="toggleCart()">🛒 Cart</div>
 <div>👤 Account</div>
@@ -128,7 +154,6 @@ html+=`
 <div class="btn upi" onclick="payUPI('${p.price}')">UPI Pay</div>
 </div>`;
 });
-
 document.getElementById("products").innerHTML=html;
 }
 
@@ -163,7 +188,6 @@ total+=Number(p.price);
 
 html+=`<h4>Total ₹${total}</h4>`;
 html+=`<button onclick="checkout()">Checkout 🔥</button>`;
-
 panel.innerHTML=html;
 }
 
@@ -191,6 +215,10 @@ window.open(`https://wa.me/919994931763?text=Buy ${name} ₹${price}`);
 
 window.payUPI=function(price){
 window.location.href=`upi://pay?pa=sachinsharma69545@okicici&pn=Cowboy&am=${price}&cu=INR`;
+}
+
+window.openWA=function(){
+window.open("https://wa.me/919994931763");
 }
 
 loadProducts();
