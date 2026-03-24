@@ -18,31 +18,28 @@ import { getFirestore, collection, getDocs } from "https://www.gstatic.com/fireb
 const firebaseConfig = {
   apiKey: "AIzaSyDRMF6SkGsve8T5HoBoCDo8pzz8BU",
   authDomain: "cowboy-collections.firebaseapp.com",
-  projectId: "cowboy-collections",
-  storageBucket: "cowboy-collections.appspot.com",
-  messagingSenderId: "669293200742",
-  appId: "1:669293200742:web:137e00ca5386a811"
+  projectId: "cowboy-collections"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 async function loadProducts(){
-  const snapshot = await getDocs(collection(db,"products"));
+const snapshot = await getDocs(collection(db,"products"));
 
-  let html="";
-  snapshot.forEach(doc=>{
-    let p=doc.data();
+let html="";
+snapshot.forEach(doc=>{
+let p=doc.data();
 
-    html+=`
-    <div style="background:white;margin:10px;padding:10px;border-radius:10px;">
-      <img src="${p.img}" width="100%">
-      <h3>${p.name}</h3>
-      <p>₹${p.price}</p>
-    </div>`;
-  });
+html+=`
+<div style="background:white;margin:10px;padding:10px;border-radius:10px;">
+<img src="${p.img}" width="100%">
+<h3>${p.name}</h3>
+<p>₹${p.price}</p>
+</div>`;
+});
 
-  document.getElementById("products").innerHTML=html;
+document.getElementById("products").innerHTML=html;
 }
 
 loadProducts();
