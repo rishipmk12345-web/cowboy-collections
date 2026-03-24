@@ -1,107 +1,115 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Cowboy Collections</title>
+<title>🤠 Cowboy Collections</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
-body {
-  margin: 0;
-  font-family: Arial;
-  background: #0a0a0a;
-  color: white;
+body{
+margin:0;
+font-family:Arial;
+background:#F5E9DA;
+color:#3E2723;
 }
 
 /* HEADER */
-.header {
-  display: flex;
-  justify-content: space-between;
-  padding: 15px;
-  background: black;
-}
-
-.menu-btn {
-  font-size: 20px;
-}
-
-/* SIDE MENU */
-.menu {
-  position: fixed;
-  left: -100%;
-  top: 0;
-  width: 70%;
-  height: 100%;
-  background: #111;
-  padding: 20px;
-  transition: 0.3s;
-}
-.menu.active {
-  left: 0;
-}
-.menu p {
-  padding: 10px 0;
-  border-bottom: 1px solid #333;
+.header{
+display:flex;
+justify-content:space-between;
+padding:15px;
+background:#3E2723;
+color:#F5E9DA;
+font-weight:bold;
 }
 
 /* HERO */
-.hero {
-  position: relative;
+.hero{
+position:relative;
 }
-.hero img {
-  width: 100%;
-  height: 250px;
-  object-fit: cover;
+.hero img{
+width:100%;
+height:260px;
+object-fit:cover;
 }
-.hero-text {
-  position: absolute;
-  bottom: 20px;
-  left: 20px;
+.hero-text{
+position:absolute;
+bottom:20px;
+left:20px;
+color:white;
 }
-.hero button {
-  padding: 8px 15px;
-  border: none;
-  background: white;
+.hero button{
+padding:10px;
+background:#D4AF37;
+border:none;
+color:black;
+font-weight:bold;
+}
+
+/* CATEGORY */
+.categories{
+display:flex;
+overflow:auto;
+padding:10px;
+gap:10px;
+}
+.cat{
+background:#8D6E63;
+color:white;
+padding:10px 15px;
+border-radius:20px;
 }
 
 /* PRODUCTS */
-.products {
-  display: grid;
-  grid-template-columns: repeat(2,1fr);
-  gap: 10px;
-  padding: 10px;
+.products{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:10px;
+padding:10px;
+}
+.card{
+background:white;
+padding:10px;
+border-radius:15px;
+box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
+.card img{
+width:100%;
+border-radius:10px;
 }
 
-.card {
-  background: #111;
-  border-radius: 10px;
-  overflow: hidden;
-  padding: 10px;
-}
-
-.card img {
-  width: 100%;
-  border-radius: 10px;
-}
-
-.card button {
-  width: 100%;
-  margin-top: 5px;
-  padding: 8px;
+/* BUTTON */
+.btn{
+width:100%;
+padding:8px;
+margin-top:5px;
+background:#3E2723;
+color:white;
+border:none;
+border-radius:8px;
 }
 
 /* CART */
-.cart {
-  padding: 10px;
+.cart{
+padding:10px;
+background:#fff3e0;
+border-radius:10px;
+margin:10px;
+}
+
+/* LOCATION */
+.location{
+padding:15px;
+text-align:center;
 }
 
 /* WHATSAPP */
-.wa {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: green;
-  padding: 15px;
-  border-radius: 50%;
+.wa{
+position:fixed;
+bottom:20px;
+right:20px;
+background:#25D366;
+padding:15px;
+border-radius:50%;
 }
 </style>
 </head>
@@ -109,104 +117,105 @@ body {
 <body>
 
 <div class="header">
-  <div onclick="toggleMenu()" class="menu-btn">☰</div>
-  <div>Cowboy Collections</div>
-  <div>🛒</div>
-</div>
-
-<div id="menu" class="menu">
-  <p>Shirts</p>
-  <p>T-Shirts</p>
-  <p>Hoodies</p>
-  <p>Pants</p>
+<div>🤠</div>
+<div>🐎 Cowboy Collections</div>
+<div>🛒</div>
 </div>
 
 <!-- HERO -->
 <div class="hero">
-  <img src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b">
-  <div class="hero-text">
-    <h2>New Drop 🔥</h2>
-    <button onclick="scrollToProducts()">Shop Now</button>
-  </div>
+<img src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b">
+<div class="hero-text">
+<h2>🤠 Western Style 🔥</h2>
+<button onclick="scrollToProducts()">Shop Now</button>
+</div>
 </div>
 
-<h2 style="padding:10px;">Best Sellers</h2>
+<!-- CATEGORY -->
+<div class="categories">
+<div class="cat">👕 Shirts</div>
+<div class="cat">👕 T-Shirts</div>
+<div class="cat">🧥 Hoodies</div>
+<div class="cat">👖 Pants</div>
+</div>
+
+<h2 style="padding:10px;">🔥 Best Sellers</h2>
 
 <div class="products" id="products"></div>
 
 <div class="cart">
-  <h3>Cart</h3>
-  <div id="cartItems"></div>
-  <h3>Total: ₹<span id="total">0</span></h3>
-  <button onclick="checkout()">Checkout</button>
+<h3>🛒 Cart</h3>
+<div id="cartItems"></div>
+<h3>Total ₹<span id="total">0</span></h3>
+<button class="btn" onclick="checkout()">Order Now 🤠</button>
 </div>
 
-<a href="https://wa.me/919999999999" class="wa">💬</a>
+<!-- LOCATION -->
+<div class="location">
+<h3>📍 Our Stores</h3>
+<p>🤠 Paramakudi</p>
+<p>🤠 Mudukulathur</p>
+</div>
+
+<a href="https://wa.me/918838542843" class="wa">💬</a>
 
 <script>
 
-let products = [
-  {name:"Linen Pant", price:999, img:"https://images.unsplash.com/photo-1602293589930-45aad59ba3ab"},
-  {name:"Acid Wash Tee", price:799, img:"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab"},
-  {name:"Drop Shoulder", price:899, img:"https://images.unsplash.com/photo-1503342217505-b0a15ec3261c"},
-  {name:"Hoodie", price:1299, img:"https://images.unsplash.com/photo-1556821840-3a63f95609a7"}
+let products=[
+{name:"Linen Pant 👖",price:999,img:"https://images.unsplash.com/photo-1602293589930-45aad59ba3ab"},
+{name:"Acid Wash Tee 👕",price:799,img:"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab"},
+{name:"Drop Shoulder 🔥",price:899,img:"https://images.unsplash.com/photo-1503342217505-b0a15ec3261c"},
+{name:"Hoodie 🧥",price:1299,img:"https://images.unsplash.com/photo-1556821840-3a63f95609a7"}
 ];
 
-let cart = [];
+let cart=[];
 
 function displayProducts(){
-  let html = "";
-  products.forEach((p,i)=>{
-    html += `
-      <div class="card">
-        <img src="${p.img}">
-        <h3>${p.name}</h3>
-        <p>₹${p.price}</p>
-        <button onclick="addToCart(${i})">Add</button>
-      </div>
-    `;
-  });
-  document.getElementById("products").innerHTML = html;
+let html="";
+products.forEach((p,i)=>{
+html+=`
+<div class="card">
+<img src="${p.img}">
+<h3>${p.name}</h3>
+<p>₹${p.price}</p>
+<button class="btn" onclick="addToCart(${i})">Add</button>
+</div>`;
+});
+document.getElementById("products").innerHTML=html;
 }
 
 function addToCart(i){
-  cart.push(products[i]);
-  displayCart();
+cart.push(products[i]);
+displayCart();
 }
 
 function displayCart(){
-  let html="";
-  let total=0;
-
-  cart.forEach(item=>{
-    html += `<p>${item.name} - ₹${item.price}</p>`;
-    total += item.price;
-  });
-
-  document.getElementById("cartItems").innerHTML = html;
-  document.getElementById("total").innerText = total;
+let html="";
+let total=0;
+cart.forEach(item=>{
+html+=`<p>${item.name} - ₹${item.price}</p>`;
+total+=item.price;
+});
+document.getElementById("cartItems").innerHTML=html;
+document.getElementById("total").innerText=total;
 }
 
 function checkout(){
-  if(cart.length==0){
-    alert("Cart empty");
-    return;
-  }
-
-  let msg="Order:%0A";
-  cart.forEach(item=>{
-    msg += item.name+" - ₹"+item.price+"%0A";
-  });
-
-  window.open("https://wa.me/9199994931763?text="+msg);
+if(cart.length==0){
+alert("Cart empty");
+return;
 }
 
-function toggleMenu(){
-  document.getElementById("menu").classList.toggle("active");
+let msg="Hi, I want to order:%0A";
+cart.forEach(item=>{
+msg+=item.name+" - ₹"+item.price+"%0A";
+});
+
+window.open("https://wa.me/9199994931763?text="+msg);
 }
 
 function scrollToProducts(){
-  document.getElementById("products").scrollIntoView();
+document.getElementById("products").scrollIntoView();
 }
 
 displayProducts();
