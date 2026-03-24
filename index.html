@@ -1,72 +1,67 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>🤠 Cowboy Collections Mens Wear</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🤠 Cowboy Collections Mens Wear</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-body { margin:0; font-family: Arial; background:#f5f5f5; }
+  <style>
+    body { margin:0; font-family:Arial; background:#f5f5f5; }
 
-/* Header */
-.header {
-  background:#ffcc00;
-  padding:15px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  font-weight:bold;
-}
+    .header {
+      background:#ffcc00;
+      padding:15px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      font-weight:bold;
+    }
 
-/* Products */
-.grid {
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:10px;
-  padding:10px;
-}
+    .grid {
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:10px;
+      padding:10px;
+    }
 
-.card {
-  background:white;
-  border-radius:12px;
-  padding:10px;
-  box-shadow:0 2px 6px rgba(0,0,0,0.1);
-}
+    .card {
+      background:white;
+      border-radius:12px;
+      padding:10px;
+      box-shadow:0 2px 6px rgba(0,0,0,0.1);
+    }
 
-.card img {
-  width:100%;
-  border-radius:10px;
-}
+    .card img {
+      width:100%;
+      border-radius:10px;
+    }
 
-.btn {
-  width:100%;
-  padding:10px;
-  margin-top:5px;
-  border:none;
-  border-radius:8px;
-  font-weight:bold;
-}
+    .btn {
+      width:100%;
+      padding:10px;
+      margin-top:5px;
+      border:none;
+      border-radius:8px;
+      font-weight:bold;
+    }
 
-.cart { background:black; color:white; }
-.wa { background:green; color:white; }
-.upi { background:#0077ff; color:white; }
+    .cart { background:black; color:white; }
+    .wa { background:green; color:white; }
 
-/* Login */
-.loginBox {
-  position:fixed;
-  bottom:0;
-  width:100%;
-  background:white;
-  padding:15px;
-  border-radius:20px 20px 0 0;
-  box-shadow:0 -2px 10px rgba(0,0,0,0.2);
-}
+    .loginBox {
+      position:fixed;
+      bottom:0;
+      width:100%;
+      background:white;
+      padding:15px;
+      border-radius:20px 20px 0 0;
+    }
 
-input {
-  width:100%;
-  padding:10px;
-  margin:5px 0;
-}
-</style>
+    input {
+      width:100%;
+      padding:10px;
+      margin:5px 0;
+    }
+  </style>
 </head>
 
 <body>
@@ -76,10 +71,8 @@ input {
   <button onclick="logout()">Logout</button>
 </div>
 
-<!-- PRODUCTS -->
 <div class="grid" id="products"></div>
 
-<!-- LOGIN -->
 <div class="loginBox" id="loginBox">
   <h3>Login 🔐</h3>
   <input id="email" placeholder="Email">
@@ -88,96 +81,88 @@ input {
   <button onclick="login()">Login</button>
 </div>
 
-<!-- FIREBASE -->
-<script type="module">
+<!-- ✅ FIREBASE (WORKING VERSION - NO MODULE ERROR) -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyDRMF6SkGsve8T5HoBoCDo8pzz8BUi7zoQ",
+    authDomain: "cowboy-collections.firebaseapp.com",
+    projectId: "cowboy-collections"
+  };
 
-/* 🔥 YOUR CONFIG */
-const firebaseConfig = {
-  apiKey: "AIzaSyDRMF6SkGsve8T5HoBoCDo8pzz8BUi7zoQ",
-  authDomain: "cowboy-collections.firebaseapp.com",
-  projectId: "cowboy-collections",
-  storageBucket: "cowboy-collections.firebasestorage.app",
-  messagingSenderId: "669293200742",
-  appId: "1:669293200742:web:137e00ca5386a8111eb4a7"
-};
+  firebase.initializeApp(firebaseConfig);
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
 
-/* PRODUCTS */
-const products = [
-  {name:"Tshirt 🤠", price:699, img:"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab"},
-  {name:"Shirt 🤠", price:899, img:"https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf"},
-  {name:"Trackpant 🤠", price:799, img:"https://images.unsplash.com/photo-1593030761757-71fae45fa0e7"}
-];
+  /* PRODUCTS */
+  const products = [
+    {name:"Tshirt 🤠", price:699, img:"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab"},
+    {name:"Shirt 🤠", price:899, img:"https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf"}
+  ];
 
-const productDiv = document.getElementById("products");
+  const productDiv = document.getElementById("products");
 
-products.forEach(p=>{
-  productDiv.innerHTML += `
-    <div class="card">
-      <img src="${p.img}">
-      <h4>${p.name}</h4>
-      <p>₹${p.price}</p>
-      <button class="btn cart" onclick="order('${p.name}',${p.price})">Order</button>
-      <button class="btn wa" onclick="whatsapp('${p.name}')">WhatsApp</button>
-      <button class="btn upi">UPI</button>
-    </div>
-  `;
-});
-
-/* AUTH */
-window.signup = ()=>{
-  createUserWithEmailAndPassword(auth,email.value,password.value)
-  .then(()=>alert("Signup Success"))
-  .catch(e=>alert(e.message));
-}
-
-window.login = ()=>{
-  signInWithEmailAndPassword(auth,email.value,password.value)
-  .then(()=>alert("Login Success"))
-  .catch(e=>alert(e.message));
-}
-
-window.logout = ()=>{
-  signOut(auth);
-}
-
-/* LOGIN CHECK */
-onAuthStateChanged(auth,user=>{
-  if(user){
-    loginBox.style.display="none";
-  } else {
-    loginBox.style.display="block";
-  }
-});
-
-/* ORDER SAVE */
-window.order = async(name,price)=>{
-  if(!auth.currentUser){
-    alert("Login first");
-    return;
-  }
-
-  await addDoc(collection(db,"orders"),{
-    product:name,
-    price:price,
-    userId:auth.currentUser.uid,
-    date:new Date().toISOString()
+  products.forEach(p=>{
+    productDiv.innerHTML += `
+      <div class="card">
+        <img src="${p.img}">
+        <h4>${p.name}</h4>
+        <p>₹${p.price}</p>
+        <button class="btn cart" onclick="order('${p.name}',${p.price})">Order</button>
+        <button class="btn wa" onclick="whatsapp('${p.name}')">WhatsApp</button>
+      </div>
+    `;
   });
 
-  alert("Order placed 🔥");
-}
+  /* AUTH */
+  function signup(){
+    auth.createUserWithEmailAndPassword(email.value,password.value)
+    .then(()=>alert("Signup Success"))
+    .catch(e=>alert(e.message));
+  }
 
-/* WHATSAPP */
-window.whatsapp = (name)=>{
-  window.open(`https://wa.me/919994931763?text=I want ${name}`);
-}
+  function login(){
+    auth.signInWithEmailAndPassword(email.value,password.value)
+    .then(()=>alert("Login Success"))
+    .catch(e=>alert(e.message));
+  }
+
+  function logout(){
+    auth.signOut();
+  }
+
+  auth.onAuthStateChanged(user=>{
+    if(user){
+      loginBox.style.display="none";
+    } else {
+      loginBox.style.display="block";
+    }
+  });
+
+  /* ORDER */
+  function order(name,price){
+    if(!auth.currentUser){
+      alert("Login first");
+      return;
+    }
+
+    db.collection("orders").add({
+      product:name,
+      price:price,
+      userId:auth.currentUser.uid,
+      date:new Date().toISOString()
+    });
+
+    alert("Order placed 🔥");
+  }
+
+  function whatsapp(name){
+    window.open("https://wa.me/919994931763?text=I want "+name);
+  }
 
 </script>
 
