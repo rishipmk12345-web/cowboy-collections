@@ -1,19 +1,21 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Admin Panel 🤠</title>
+<title>Admin Bulk Panel 🤠</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 
 <body style="font-family:sans-serif;padding:20px;">
 
-<h2>🤠 Admin Panel</h2>
+<h2>🤠 Bulk Product Upload</h2>
 
-<input id="name" placeholder="Product Name (Tshirt / Shirt / Trackpant)"><br><br>
+<p>Format: name,price,image</p>
 
-<input id="img" placeholder="Image URL"><br><br>
+<textarea id="bulk" rows="10" style="width:100%;"></textarea>
 
-<button onclick="addProduct()">Add Product 🔥</button>
+<br><br>
+
+<button onclick="bulkAdd()">Upload All 🔥</button>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -28,45 +30,31 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-window.addProduct = async function(){
+window.bulkAdd = async function(){
+let data = document.getElementById("bulk").value.trim();
 
-let name=document.getElementById("name").value.toLowerCase();
-let img=document.getElementById("img").value;
-
-if(!name || !img){
-alert("Fill all fields ❌");
+if(!data){
+alert("Paste products ❌");
 return;
 }
 
-let category="";
-let price=0;
+let lines = data.split("\n");
 
-/* AUTO CATEGORY + PRICE */
-if(name.includes("tshirt") || name.includes("t-shirt")){
-category="T-Shirt";
-price=699;
-}
-else if(name.includes("shirt")){
-category="Shirt";
-price=899;
-}
-else if(name.includes("track") || name.includes("pant")){
-category="Track Pant";
-price=799;
-}
-else{
-category="Others";
-price=499;
-}
+for(let line of lines){
+let parts = line.split(",");
+
+let name = parts[0];
+let price = Number(parts[1]);
+let img = parts[2];
 
 await addDoc(collection(db,"products"),{
 name:name,
-category:category,
 price:price,
 img:img
 });
+}
 
-alert("Product Added 🔥");
+alert("All Products Uploaded 🔥");
 }
 </script>
 
