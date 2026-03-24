@@ -20,27 +20,17 @@ padding:15px;
 background:#3b2f2f;
 color:#fff;
 font-weight:bold;
+font-size:18px;
 }
 
 /* HERO */
-.hero{
-position:relative;
-}
 .hero img{
 width:100%;
-height:300px;
+height:260px;
 object-fit:cover;
 }
-.heroText{
-position:absolute;
-bottom:20px;
-left:20px;
-color:white;
-font-size:22px;
-font-weight:bold;
-}
 
-/* SECTION TITLE */
+/* TITLE */
 .title{
 padding:10px;
 font-size:20px;
@@ -64,7 +54,7 @@ box-shadow:0 3px 8px rgba(0,0,0,0.1);
 
 .card img{
 width:100%;
-height:180px;
+height:170px;
 object-fit:cover;
 }
 
@@ -73,8 +63,8 @@ padding:10px;
 }
 
 .price{
-color:#8B4513;
 font-weight:bold;
+color:#8B4513;
 }
 
 .tag{
@@ -82,14 +72,16 @@ color:green;
 font-size:12px;
 }
 
+/* BUTTON */
 .btn{
 width:100%;
-padding:8px;
-margin-top:5px;
+padding:10px;
+margin-top:6px;
 border:none;
 border-radius:6px;
 background:#3b2f2f;
 color:white;
+font-weight:bold;
 }
 
 /* CART */
@@ -100,14 +92,14 @@ padding:10px;
 border-radius:10px;
 }
 
-/* WHATSAPP BUTTON */
+/* WHATSAPP FLOAT */
 .whatsapp{
 position:fixed;
 bottom:20px;
 right:20px;
 background:#25D366;
 color:white;
-padding:15px;
+padding:14px;
 border-radius:50%;
 font-size:20px;
 text-decoration:none;
@@ -119,25 +111,25 @@ text-decoration:none;
 
 <div class="header">
 <div>🤠 Cowboy Collections</div>
-<div>🔥 New Drop</div>
+<div>🛒 Cart</div>
 </div>
 
 <div class="hero">
 <img src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b">
-<div class="heroText">🔥 Premium Streetwear</div>
 </div>
 
 <div class="title">🔥 Best Sellers</div>
+
 <div class="products" id="products"></div>
 
 <div class="cart">
-<h3>🛒 Cart</h3>
+<h3>🛒 Your Cart</h3>
 <div id="cartItems"></div>
 <h3>Total ₹<span id="total">0</span></h3>
 <button class="btn" onclick="pay()">Pay via UPI 💳</button>
 </div>
 
-<a class="whatsapp" id="waBtn">💬</a>
+<a class="whatsapp" href="https://wa.me/919994931763">💬</a>
 
 <script>
 
@@ -156,7 +148,7 @@ img:"https://images.unsplash.com/photo-1512436991641-6745cdb1723f"
 
 let cart=[];
 
-/* DISPLAY */
+/* SHOW PRODUCTS */
 function display(){
 let html="";
 products.forEach((p,i)=>{
@@ -168,19 +160,20 @@ html+=`
 <p class="price">₹${p.price}</p>
 <p class="tag">🔥 Limited Stock</p>
 <button class="btn" onclick="add(${i})">Add to Cart</button>
-<button class="btn" onclick="whatsappOrder('${p.name}',${p.price})">Order on WhatsApp</button>
+<button class="btn" onclick="orderWA('${p.name}',${p.price})">Order via WhatsApp</button>
 </div>
 </div>`;
 });
 document.getElementById("products").innerHTML=html;
 }
 
-/* CART */
+/* ADD CART */
 function add(i){
 cart.push(products[i]);
 showCart();
 }
 
+/* SHOW CART */
 function showCart(){
 let html="";
 let total=0;
@@ -194,7 +187,7 @@ document.getElementById("cartItems").innerHTML=html;
 document.getElementById("total").innerText=total;
 }
 
-/* UPI */
+/* UPI PAYMENT */
 function pay(){
 if(cart.length==0){
 alert("Cart empty");
@@ -208,15 +201,11 @@ let upi="upi://pay?pa=sachinsharma69545@okicici&pn=CowboyCollections&am="+total+
 window.open(upi);
 }
 
-/* WHATSAPP */
-function whatsappOrder(name,price){
+/* WHATSAPP ORDER */
+function orderWA(name,price){
 let msg="Hi, I want to order: "+name+" Price: ₹"+price;
-let url="https://wa.me/919994931763?text="+encodeURIComponent(msg);
-window.open(url);
+window.open("https://wa.me/919994931763?text="+encodeURIComponent(msg));
 }
-
-/* FLOAT BUTTON */
-document.getElementById("waBtn").href="https://wa.me/919994931763";
 
 display();
 
